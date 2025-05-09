@@ -6,11 +6,11 @@
         },
         "review_rating": {
             "average_ratings": {
-                "Overall": 3.66,
+                "Overall": 3.67,
                 "Food and taste": 3.72,
                 "Service": 3.57,
-                "Atmosphere": 3.85,
-                "Drinks": 3.59,
+                "Atmosphere": 3.86,
+                "Drinks": 3.6,
                 "Cost performance": 3.67
             },
             "rating_distribution": [
@@ -37,7 +37,7 @@
                 {
                     "range": "3.0 - 3.4",
                     "percentage": 20,
-                    "people": 87
+                    "people": 86
                 },
                 {
                     "range": "2.5 - 2.9",
@@ -170,113 +170,120 @@
                 "title": "Anniversary Lunch Course with Sparkling Wine Toast"
             }
         ],
-        "restaurant_information": [
-            {
-                "field": "Restaurant name",
-                "value": "Shibuya Sushi Sen"
-            },
-            {
-                "field": "Categories",
-                "value": "Sushi, Seafood, Izakaya (Tavern)"
-            },
-            {
-                "field": "Phone number (for reservation and inquiry)",
-                "value": "050-5589-8261"
-            },
-            {
-                "field": "Reservation availability",
-                "value": "Reservations available"
-            },
-            {
-                "field": "Address",
-                "value": "東京都渋谷区渋谷2-19-17 第106東京ビル 10F\n\nShow larger map\nFind nearby restaurants"
-            },
-            {
-                "field": "Transportation",
-                "value": "- Toei Toyoko Line, Den-en-toshi Line, Hanzomon Line, Fukutoshin Line\n- 3-minute walk from Exit 15\n- 4-minute walk from JR Shibuya Station, Miyamasuzaka Exit\n\n\n264 meters from Shibuya."
-            },
-            {
-                "field": "Opening hours",
-                "value": "Mon, Tue, Wed, Thu, Fri\n\n11:30 - 14:00\n17:00 - 23:00\n\nSat, Sun, Public Holiday\n\n11:30 - 14:00\n16:00 - 23:00\n■ 定休日\n不定休"
-            },
-            {
-                "field": "Average price",
-                "value": "JPY 6,000 - JPY 7,999\n\nJPY 3,000 - JPY 3,999"
-            },
-            {
-                "field": "Average price（Based on reviews）",
-                "value": "JPY 10,000 - JPY 14,999\nJPY 4,000 - JPY 4,999\n\nView spending breakdown"
-            },
-            {
-                "field": "Payment methods",
-                "value": "Credit card accepted\n\n（VISA, Master, JCB, AMEX, Diners）\n\nElectronic money not accepted\n\nQR code payments not accepted"
-            },
-            {
-                "field": "Service charge & fee",
-                "value": "A service charge of 10% will be added.\n\nOriginal text\n\nサービス料10％を頂戴しております。\n\nThis section has been automatically translated. Please check with the restaurant for accurate information."
-            },
-            {
-                "field": "Number of seats",
-                "value": "30 Seats"
-            },
-            {
-                "field": "Private rooms",
-                "value": "Available\n\nFor 2 people、For 4 people、For 6 people、For 8 people"
-            },
-            {
-                "field": "Private use",
-                "value": "Unavailable"
-            },
-            {
-                "field": "Non-smoking/smoking",
-                "value": "Non smoking"
-            },
-            {
-                "field": "Parking",
-                "value": "Unavailable"
-            },
-            {
-                "field": "Space/facilities",
-                "value": "Stylish space,Relaxing space,Spacious seating,Couple seating,Counter seating,Sofa seating"
-            },
-            {
-                "field": "Set menu",
-                "value": "All you can drink"
-            },
-            {
-                "field": "Drink",
-                "value": "Sake (Nihonshu),Shochu (Japanese spirits),Wine,Cocktails available,Particular about Sake (Nihonshu),Particular about Shochu (Japanese spirits),Particular about wine,Particular about cocktails"
-            },
-            {
-                "field": "Food",
-                "value": "Particular about fish"
-            },
-            {
-                "field": "Occasion",
-                "value": "Family friendly |Business\n\nThis occasion is recommended by many people."
-            },
-            {
-                "field": "Location",
-                "value": "Hideout"
-            },
-            {
-                "field": "Service",
-                "value": "Parties over 2.5 hours,"
-            },
-            {
-                "field": "Family friendly",
-                "value": "Children welcome"
-            },
-            {
-                "field": "The opening day",
-                "value": "2022.9.23"
-            },
-            {
-                "field": "Phone number",
-                "value": "03-6452-6505"
-            }
-        ],
-        "seats_facilities": [],
+        "restaurant_information": {
+            "details": [
+                {
+                    "field": "Restaurant name",
+                    "value": null
+                },
+                {
+                    "field": "Categories",
+                    "value": null
+                },
+                {
+                    "field": "Phone number (for reservation and inquiry)",
+                    "value": "050-5589-8261"
+                },
+                {
+                    "field": "Reservation availability",
+                    "value": "Reservations available"
+                },
+                {
+                    "field": "Address",
+                    "value": "東京都渋谷区渋谷2-19-17 第106東京ビル 10F"
+                },
+                {
+                    "field": "Transportation",
+                    "value": "- Toei Toyoko Line, Den-en-toshi Line, Hanzomon Line, Fukutoshin Line\n- 3-minute walk from Exit 15\n- 4-minute walk from JR Shibuya Station, Miyamasuzaka Exit 264 meters from Shibuya."
+                },
+                {
+                    "field": "Opening hours",
+                    "value": "Mon, Tue, Wed, Thu, Fri Sat, Sun, Public Holiday"
+                },
+                {
+                    "field": "Average price",
+                    "value": "JPY 6,000 - JPY 7,999 JPY 3,000 - JPY 3,999"
+                },
+                {
+                    "field": "Average price（Based on reviews）",
+                    "value": "View spending breakdown"
+                },
+                {
+                    "field": "Payment methods",
+                    "value": "Credit card accepted （VISA, Master, JCB, AMEX, Diners） Electronic money not accepted QR code payments not accepted"
+                },
+                {
+                    "field": "Service charge & fee",
+                    "value": "A service charge of 10% will be added. Original text サービス料10％を頂戴しております。 This section has been automatically translated. Please check with the restaurant for accurate information."
+                }
+            ],
+            "seats_facilities": [
+                {
+                    "field": "Number of seats",
+                    "value": "30 Seats"
+                },
+                {
+                    "field": "Private rooms",
+                    "value": "Available For 2 people、For 4 people、For 6 people、For 8 people"
+                },
+                {
+                    "field": "Private use",
+                    "value": "Unavailable"
+                },
+                {
+                    "field": "Non-smoking/smoking",
+                    "value": "Non smoking"
+                },
+                {
+                    "field": "Parking",
+                    "value": "Unavailable"
+                },
+                {
+                    "field": "Space/facilities",
+                    "value": "Stylish space,Relaxing space,Spacious seating,Couple seating,Counter seating,Sofa seating"
+                }
+            ],
+            "menu": [
+                {
+                    "field": "Set menu",
+                    "value": "All you can drink"
+                },
+                {
+                    "field": "Drink",
+                    "value": "Sake (Nihonshu),Shochu (Japanese spirits),Wine,Cocktails available,Particular about Sake (Nihonshu),Particular about Shochu (Japanese spirits),Particular about wine,Particular about cocktails"
+                },
+                {
+                    "field": "Food",
+                    "value": "Particular about fish"
+                }
+            ],
+            "feature_related_info": [
+                {
+                    "field": "Occasion",
+                    "value": "Family friendly |Business This occasion is recommended by many people."
+                },
+                {
+                    "field": "Location",
+                    "value": "Hideout"
+                },
+                {
+                    "field": "Service",
+                    "value": "Parties over 2.5 hours,"
+                },
+                {
+                    "field": "Family friendly",
+                    "value": "Children welcome"
+                },
+                {
+                    "field": "The opening day",
+                    "value": "2022.9.23"
+                },
+                {
+                    "field": "Phone number",
+                    "value": "03-6452-6505"
+                }
+            ]
+        },
         "url": "https://tabelog.com/en/tokyo/A1303/A130301/13275802/"
     }
 ]

@@ -252,50 +252,59 @@ class RestaurantsSpider(scrapy.Spider):
                 EC.presence_of_element_located((By.CLASS_NAME, 'rstinfo-table__table'))
             )
 
-            # Extract restaurant information from the "Details" section
-            restaurant_info = self.driver.execute_script(
-                "return Array.from(document.querySelectorAll('.rstinfo-table__table tr')).map(row => {"
-                "    const field = row.querySelector('th')?.innerText.trim() || null;"
-                "    const value = row.querySelector('td')?.innerText.trim() || null;"
-                "    return { field, value };"
+            # Extract all tables under the "Details", "Seats/facilities", "Menu", and "Feature - Related Information" sections
+            tables_data = self.driver.execute_script(
+                "return Array.from(document.querySelectorAll('h4.rstinfo-table__title')).map(title => {"
+                "    const section = title.innerText.trim();"
+                "    const rows = Array.from(title.nextElementSibling.querySelectorAll('tr')).map(row => {"
+                "        const field = row.querySelector('th')?.innerText.trim() || null;"
+                "        const value = Array.from(row.querySelectorAll('td p')).map(p => p.innerText.trim()).join(' ') || null;"
+                "        return { field, value };"
+                "    });"
+                "    return { section, rows };"
                 "});"
             )
 
-            # Filter out rows with null fields or values
-            restaurant_info = [info for info in restaurant_info if info['field'] and info['value']]
+            # Organize data into separate lists for each section
+            details = []
+            seats_facilities = []
+            menu = []
+            feature_related_info = []
 
-            logger.info(f"Extracted {len(restaurant_info)} restaurant information items.")
-            return restaurant_info
+            for table in tables_data:
+                section = table['section']
+                rows = table['rows']
+
+                if section == "Details":
+                    details = rows
+                elif section == "Seats/facilities":
+                    seats_facilities = rows
+                elif section == "Menu":
+                    menu = rows
+                elif "Feature" in section:  # Matches "Feature - Related Information"
+                    feature_related_info = rows
+
+            logger.info(f"Extracted {len(details)} details items.")
+            logger.info(f"Extracted {len(seats_facilities)} seats/facilities items.")
+            logger.info(f"Extracted {len(menu)} menu items.")
+            logger.info(f"Extracted {len(feature_related_info)} feature-related information items.")
+
+            # Return all extracted data as a dictionary
+            return {
+                "details": details,
+                "seats_facilities": seats_facilities,
+                "menu": menu,
+                "feature_related_info": feature_related_info
+            }
 
         except Exception as e:
             logger.error(f"Failed to retrieve restaurant information: {e}")
-            return []
-    
-    def parse_seats_facilities(self):
-        try:
-            # Wait for the Seats/Facilities section to load
-            WebDriverWait(self.driver, 15).until(
-                EC.presence_of_element_located((By.XPATH, "//h4[contains(text(), 'Seats/facilities')]/following-sibling::table"))
-            )
-
-            # Extract Seats/Facilities information
-            seats_facilities = self.driver.execute_script(
-                "return Array.from(document.querySelectorAll('h4.rstinfo-table__title:contains(\"Seats/facilities\") + table tr')).map(row => {"
-                "    const field = row.querySelector('th')?.innerText.trim() || null;"
-                "    const value = Array.from(row.querySelectorAll('td p')).map(p => p.innerText.trim()).join(' ') || null;"
-                "    return { field, value };"
-                "});"
-            )
-
-            # Filter out rows with null fields or values
-            seats_facilities = [info for info in seats_facilities if info['field'] and info['value']]
-
-            logger.info(f"Extracted {len(seats_facilities)} seats/facilities items.")
-            return seats_facilities
-
-        except Exception as e:
-            logger.error(f"Failed to retrieve seats/facilities information: {e}")
-            return []
+            return {
+                "details": [],
+                "seats_facilities": [],
+                "menu": [],
+                "feature_related_info": []
+            }
 
     def parse_detail(self, response):
         self.driver.get(response.url)
@@ -312,8 +321,6 @@ class RestaurantsSpider(scrapy.Spider):
         
         restaurant_information = self.parse_restaurant_inaformation()
         
-        seats_facilities = self.parse_seats_facilities()
-        
         print("Sepecialies ",specialities)
 
         data = {
@@ -325,7 +332,7 @@ class RestaurantsSpider(scrapy.Spider):
             "specialities": specialities,
             "set_menu": setmenu,
             "restaurant_information": restaurant_information,
-            "seats_facilities": seats_facilities,
+            # "seats_facilities": seats_facilities,
             'url': response.url
         }
 
