@@ -224,14 +224,16 @@ class RestaurantsSpider(scrapy.Spider):
                 EC.presence_of_element_located((By.CLASS_NAME, 'rstdtl-course-list'))
             )
 
-            # Extract Set Menu data
+            # Extract Set Menu data, including image source and available time
             set_menu_data = self.driver.execute_script(
                 "return Array.from(document.querySelectorAll('.rstdtl-course-list')).map(menu => {"
                 "    return {"
                 "        title: menu.querySelector('.rstdtl-course-list__course-title-text')?.innerText.trim() || null,"
                 "        description: menu.querySelector('.rstdtl-course-list__desc')?.innerText.trim() || null,"
                 "        price: menu.querySelector('.rstdtl-course-list__price-num em')?.innerText.trim() || null,"
-                "        link: menu.querySelector('.rstdtl-course-list__target')?.getAttribute('href') || null"
+                "        link: menu.querySelector('.rstdtl-course-list__target')?.getAttribute('href') || null,"
+                "        image_src: menu.querySelector('.rstdtl-course-list__img-target img')?.getAttribute('src') || null,"
+                "        available_time: menu.querySelector('.rstdtl-course-list__course-rule dd')?.innerText.trim() || null"
                 "    };"
                 "});"
             )
@@ -241,6 +243,58 @@ class RestaurantsSpider(scrapy.Spider):
 
         except Exception as e:
             logger.error(f"Failed to navigate to 'View more set menu': {e}")
+            return []
+
+    def parse_restaurant_inaformation(self):
+        try:
+            # Wait for the restaurant information section to load
+            WebDriverWait(self.driver, 15).until(
+                EC.presence_of_element_located((By.CLASS_NAME, 'rstinfo-table__table'))
+            )
+
+            # Extract restaurant information from the "Details" section
+            restaurant_info = self.driver.execute_script(
+                "return Array.from(document.querySelectorAll('.rstinfo-table__table tr')).map(row => {"
+                "    const field = row.querySelector('th')?.innerText.trim() || null;"
+                "    const value = row.querySelector('td')?.innerText.trim() || null;"
+                "    return { field, value };"
+                "});"
+            )
+
+            # Filter out rows with null fields or values
+            restaurant_info = [info for info in restaurant_info if info['field'] and info['value']]
+
+            logger.info(f"Extracted {len(restaurant_info)} restaurant information items.")
+            return restaurant_info
+
+        except Exception as e:
+            logger.error(f"Failed to retrieve restaurant information: {e}")
+            return []
+    
+    def parse_seats_facilities(self):
+        try:
+            # Wait for the Seats/Facilities section to load
+            WebDriverWait(self.driver, 15).until(
+                EC.presence_of_element_located((By.XPATH, "//h4[contains(text(), 'Seats/facilities')]/following-sibling::table"))
+            )
+
+            # Extract Seats/Facilities information
+            seats_facilities = self.driver.execute_script(
+                "return Array.from(document.querySelectorAll('h4.rstinfo-table__title:contains(\"Seats/facilities\") + table tr')).map(row => {"
+                "    const field = row.querySelector('th')?.innerText.trim() || null;"
+                "    const value = Array.from(row.querySelectorAll('td p')).map(p => p.innerText.trim()).join(' ') || null;"
+                "    return { field, value };"
+                "});"
+            )
+
+            # Filter out rows with null fields or values
+            seats_facilities = [info for info in seats_facilities if info['field'] and info['value']]
+
+            logger.info(f"Extracted {len(seats_facilities)} seats/facilities items.")
+            return seats_facilities
+
+        except Exception as e:
+            logger.error(f"Failed to retrieve seats/facilities information: {e}")
             return []
 
     def parse_detail(self, response):
@@ -256,6 +310,10 @@ class RestaurantsSpider(scrapy.Spider):
         
         setmenu = self.navigate_and_setmenu()
         
+        restaurant_information = self.parse_restaurant_inaformation()
+        
+        seats_facilities = self.parse_seats_facilities()
+        
         print("Sepecialies ",specialities)
 
         data = {
@@ -266,6 +324,8 @@ class RestaurantsSpider(scrapy.Spider):
             "review_rating": {},
             "specialities": specialities,
             "set_menu": setmenu,
+            "restaurant_information": restaurant_information,
+            "seats_facilities": seats_facilities,
             'url': response.url
         }
 
