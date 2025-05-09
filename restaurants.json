@@ -1,16 +1,184 @@
 [
-{"eidtorial_overview": {"headline": "NEW OPEN【新橋駅徒歩1分】北陸直送の新鮮海鮮や本格焼き鳥を味わう！宴会個室あり"}, "url": "https://tabelog.com/tokyo/A1301/A130103/13217264/"},
-{"eidtorial_overview": {"headline": "渋谷駅徒歩２分・6種のチーズ・切りたての生ハム・ソムリエが厳選したワイン"}, "url": "https://tabelog.com/tokyo/A1303/A130301/13104399/"},
-{"eidtorial_overview": {"headline": "［立川グリーンスプリングス内］立川駅から 徒歩7分の アジアンリゾート"}, "url": "https://tabelog.com/tokyo/A1329/A132901/13258307/"},
-{"eidtorial_overview": {"headline": "【西武新宿駅1分】新宿の新名所★歌舞伎町横丁！1階にあるのが昭和大衆酒場 久右衛門"}, "url": "https://tabelog.com/tokyo/A1304/A130401/13275928/"},
-{"eidtorial_overview": {"headline": "毎日15時OPEN！自由が丘駅徒歩30秒☆野菜巻き串ともつ鍋が名物の博多料理居酒屋"}, "url": "https://tabelog.com/tokyo/A1317/A131703/13249457/"},
-{"eidtorial_overview": {"headline": "ご宴会のご予約受け賜ります。純米酒も飲める飲み放題付きのお得な五光コースがおすすめです！！"}, "url": "https://tabelog.com/tokyo/A1314/A131401/13204708/"},
-{"eidtorial_overview": {"headline": "大井町駅東口徒歩1分★290円～新鮮ホルモン焼き★低温調理の新鮮もつ刺しも大人気！"}, "url": "https://tabelog.com/tokyo/A1315/A131501/13251043/"},
-{"eidtorial_overview": {"headline": "【新橋駅2分】全席個室で味わう朝採れ直送旬魚と京風和食。日々の中に、少し贅沢なひとときを。"}, "url": "https://tabelog.com/tokyo/A1301/A130103/13306668/"},
-{"eidtorial_overview": {"headline": "吉祥寺 公園口 ３分 12月31日〜1月5日 正月休み 北海道から空輸直送！◆テラス席喫煙可"}, "url": "https://tabelog.com/tokyo/A1320/A132001/13249798/"},
-{"eidtorial_overview": {"headline": "”週1通っても飽きない焼肉屋”を目指しております！！"}, "url": "https://tabelog.com/tokyo/A1304/A130401/13255556/"},
-{"eidtorial_overview": {"headline": "\n                Just 2 Minutes from Ginza Station! Enjoy Kobe Beef A-Rank Chateaubriand and Marbled Cuts in Private Rooms!\n              "}, "url": "https://tabelog.com/en/tokyo/A1301/A130101/13217732/"},
-{"eidtorial_overview": {"headline": "\n                2-Hour All-You-Can-Drink for Just 1,200 Yen! Now Includes \"Japanese Sake\" and \"Shochu\"!\n              "}, "url": "https://tabelog.com/en/tokyo/A1327/A132701/13286926/"},
-{"eidtorial_overview": {"headline": "\n                [1 minute walk from Kitasenju Station] Spacious space and smoking room available! We also offer a variety of courses that include 2 hours of all-you-can-drink!\n              "}, "url": "https://tabelog.com/en/tokyo/A1324/A132402/13268760/"},
-{"eidtorial_overview": {"headline": "\n                All Private Rooms ◆ Perfect for Parties! Enjoy Our 3-Hour All-You-Can-Drink Course with Delicious Chicken and Yakitori\n              "}, "url": "https://tabelog.com/en/tokyo/A1311/A131101/13230392/"},
-{"eidtorial_overview": {"headline": "\n                As spring transitions into early summer, indulge in our special Suprême course packed with seasonal ingredients.\n              "}, "url": "https://tabelog.com/en/tokyo/A1301/A130101/13288683/"}
+    {
+        "editorial_overview": {
+            "headline": "Just 3 Minutes from Shibuya Station: Enjoy Innovative Edomae Sushi in a Serene Counter and Luxurious Private Rooms",
+            "description": "We offer a blend of seasonal ingredients and meticulously crafted kaiseki cuisine, featuring dishes that can only be enjoyed at this time of year. Experience artistic plates delivered as a course, showcasing the chef's elegant techniques. Savor authentic Edomae sushi in a calm, sophisticated counter setting."
+        },
+        "review_rating": {
+            "average_ratings": {
+                "Overall": 3.66,
+                "Food and taste": 3.72,
+                "Service": 3.57,
+                "Atmosphere": 3.85,
+                "Drinks": 3.59,
+                "Cost performance": 3.67
+            },
+            "rating_distribution": [
+                {
+                    "range": "5.0",
+                    "percentage": 8,
+                    "people": 37
+                },
+                {
+                    "range": "4.5 - 4.9",
+                    "percentage": 10,
+                    "people": 46
+                },
+                {
+                    "range": "4.0 - 4.4",
+                    "percentage": 22,
+                    "people": 98
+                },
+                {
+                    "range": "3.5 - 3.9",
+                    "percentage": 30,
+                    "people": 132
+                },
+                {
+                    "range": "3.0 - 3.4",
+                    "percentage": 20,
+                    "people": 87
+                },
+                {
+                    "range": "2.5 - 2.9",
+                    "percentage": 3,
+                    "people": 12
+                },
+                {
+                    "range": "2.0 - 2.4",
+                    "percentage": 4,
+                    "people": 18
+                },
+                {
+                    "range": "1.5 - 1.9",
+                    "percentage": 1,
+                    "people": 3
+                },
+                {
+                    "range": "1.0 - 1.4",
+                    "percentage": 2,
+                    "people": 9
+                }
+            ]
+        },
+        "specialities": [
+            {
+                "comment": null,
+                "image_src": null,
+                "title": null
+            },
+            {
+                "comment": "Please enjoy your meal at our L-shaped counter, beautifully crafted from white wood. The space is simple yet exudes a sense of cleanliness. We have meticulously focused on every detail to ensure our customers are completely satisfied.",
+                "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/185387/320x320_square_a7c88e497a0dd3701b541b600b81db6b.jpg",
+                "title": "\"Enchanted by the Master’s Skill at the Serene Counter: A Rising Star\""
+            },
+            {
+                "comment": "The sushi toppings are carefully selected by the chef himself, who visits the market every day to choose seasonal ingredients. The perfectly cooked rice uses red vinegar, which is characteristic of Edomae sushi, enhancing the flavor of the toppings. Additionally, the chef's dedication is evident in everything that customers taste, including the wasabi, soy sauce, and high-quality, aromatic seaweed that elevate the flavor of the sushi.",
+                "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/184397/320x320_square_6a7fb91b228cbd35aadbdded2da4b472.jpg",
+                "title": "\"Chef's Choice Sushi Course: A Supreme Moment Crafted by Sushi and Exquisite Dishes\""
+            },
+            {
+                "comment": "We offer a wide variety of plans for both lunch and dinner to suit your budget and occasion. These are perfect for company receptions, celebratory meals, and special events such as weddings and funerals, making them ideal for your special day dining.",
+                "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/185387/320x320_square_fc5c20f71bf865761d2dc9b08f431218.jpg",
+                "title": "\"Fully Private Rooms Available: Seasonal Kaiseki and Sushi for Special Days with Loved Ones\""
+            },
+            {
+                "comment": "We carefully select seasonal ingredients and prepare them to be served at their most delicious state. Please enjoy the chef's proud creations, crafted by a promising young chef who honed his skills at a Michelin-starred restaurant.",
+                "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/185387/320x320_square_5a142bdd193ebd0b0b7c6d2cc6fb96dd.jpg",
+                "title": "\"Exquisite Mastery: A Culinary Masterpiece Like a Work of Art\""
+            }
+        ],
+        "url": "https://tabelog.com/en/tokyo/A1303/A130301/13275802/"
+    },
+    {
+        "editorial_overview": {
+            "headline": "A Michelin-Starred Restaurant from Akasaka Opens in Shibuya!",
+            "description": "Akasaka Sushi Matsumoto has been featured in the Michelin Guide for two consecutive years. Experience a unique omakase course that combines playful appetizers with traditional Edomae sushi, all crafted with the chef's keen sense and expertise."
+        },
+        "review_rating": {
+            "average_ratings": {
+                "Overall": 3.75,
+                "Food and taste": 3.93,
+                "Service": 3.8,
+                "Atmosphere": 3.83,
+                "Drinks": 3.78,
+                "Cost performance": 3.73
+            },
+            "rating_distribution": [
+                {
+                    "range": "5.0",
+                    "percentage": 5,
+                    "people": 19
+                },
+                {
+                    "range": "4.5 - 4.9",
+                    "percentage": 11,
+                    "people": 38
+                },
+                {
+                    "range": "4.0 - 4.4",
+                    "percentage": 31,
+                    "people": 108
+                },
+                {
+                    "range": "3.5 - 3.9",
+                    "percentage": 32,
+                    "people": 111
+                },
+                {
+                    "range": "3.0 - 3.4",
+                    "percentage": 15,
+                    "people": 52
+                },
+                {
+                    "range": "2.5 - 2.9",
+                    "percentage": 3,
+                    "people": 9
+                },
+                {
+                    "range": "2.0 - 2.4",
+                    "percentage": 1,
+                    "people": 4
+                },
+                {
+                    "range": "1.5 - 1.9",
+                    "percentage": 1,
+                    "people": 4
+                },
+                {
+                    "range": "1.0 - 1.4",
+                    "percentage": 2,
+                    "people": 6
+                }
+            ]
+        },
+        "specialities": [
+            {
+                "comment": null,
+                "image_src": null,
+                "title": null
+            },
+            {
+                "comment": "Please enjoy the sushi crafted by skilled artisans who have honed their skills at renowned establishments, along with carefully prepared dishes. Each ingredient is thoughtfully selected, and we never compromise on sourcing the finest quality. Staying true to the basics, we strive daily to pursue deliciousness while envisioning the happy faces of our customers who visit us.",
+                "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/156956/320x320_square_156956327.jpg",
+                "title": "\"Of course, the sushi toppings are important, but I also carefully select all the seasonings with my own taste.\""
+            },
+            {
+                "comment": "Despite its fortunate location, the serene entrance and the door made of cypress create a dignified atmosphere that makes one forget the hustle and bustle of the city. As you step inside with a sense of anticipation and pleasant tension, the counter seats made of white wood greet you refreshingly. Whether for business meetings, dining, or a date with a loved one, please enjoy a luxurious moment for adults, accompanied by the chef's thoughtful care.",
+                "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/157963/320x320_square_157963725.jpg",
+                "title": "\"Indulge in Luxurious Moments for Adults at the Counter Seats Embraced by the Refreshing Scent of Hinoki.\""
+            },
+            {
+                "comment": "The only option available is the <omakase course>. The course begins with a rich clam soup that relaxes the mind. Following that, there are deep-fried Nebuto, a specialty of Onomichi, chawanmushi topped with pickled plum, and a comparison of two types of sea urchin wrapped in squid: Aomori's purple sea urchin and Hokkaido's bafun sea urchin. A series of witty appetizers follow, leading up to the much-anticipated traditional and authentic Edomae sushi. The unique way of enjoying the fatty tuna with homemade salt is one of the charms that only \"Sushi Matsumoto\" can offer.",
+                "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/156956/320x320_square_156956330.jpg",
+                "title": "\"Traditional Edomae Sushi with a Playful Twist in a Course Menu.\""
+            },
+            {
+                "comment": "We have prepared numerous private rooms where you can enjoy precious moments with your loved ones. The elegant and calming wood-grain private rooms create an atmosphere of excitement for savoring delicious food and intimacy. Whether for business meetings, family gatherings, or annual celebrations, you will feel the pride of our chef. Please enjoy a fulfilling time indulging in exquisite sushi and thoughtfully crafted dishes.",
+                "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/157963/320x320_square_157963721.jpg",
+                "title": "\"With a Sense of Elevation and Specialness: An Intimate Private Room for Conversations with Your Loved Ones\""
+            }
+        ],
+        "url": "https://tabelog.com/en/tokyo/A1303/A130301/13261619/"
+    }
+]

@@ -8,17 +8,26 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from scrapy.http import HtmlResponse
 import time
+import logging
+
+# Set Selenium logging level to WARNING
+logging.getLogger('selenium').setLevel(logging.WARNING)
+
+# Set Scrapy logging level to WARNING
+logging.getLogger('scrapy').setLevel(logging.WARNING)
+
 
 class RestaurantsSpider(scrapy.Spider):
     name = "restaurants"
     allowed_domains = ["tabelog.com"]
-    start_urls = ['https://tabelog.com/tokyo/rstLst/']
+    start_urls = ['https://tabelog.com/tokyo/A1303/']
 
-    def __init__(self, num_restaurants=10, *args, **kwargs):
+    def __init__(self, num_restaurants=2, *args, **kwargs):
         super(RestaurantsSpider, self).__init__(*args, **kwargs)
-        self.num_restaurants = int(num_restaurants)  # Desired number of restaurant links
+        # Desired number of restaurant links
+        self.num_restaurants = int(num_restaurants)
         self.collected_links = 0  # Counter for collected links
-        
+
         chrome_options = Options()
         # chrome_options.add_argument("--headless")  # Uncomment if you don't need GUI
         chrome_options.add_argument("--disable-gpu")
@@ -32,7 +41,8 @@ class RestaurantsSpider(scrapy.Spider):
         try:
             # Wait for the modal to appear (up to 10 seconds)
             WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, 'div.c-lang-switch__inner.js-lang-change-text-en'))
+                EC.presence_of_element_located(
+                    (By.CSS_SELECTOR, 'div.c-lang-switch__inner.js-lang-change-text-en'))
             )
 
             # Find and click the "Switch to English" button
@@ -44,18 +54,22 @@ class RestaurantsSpider(scrapy.Spider):
 
             # Wait for the page to reload (adjust wait time depending on network speed)
             WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, 'a.list-rst__rst-name-target'))
+                EC.presence_of_element_located(
+                    (By.CSS_SELECTOR, 'a.list-rst__rst-name-target'))
                 # Example element after reload
             )
         except Exception as e:
-            self.logger.info(f"Language switch modal not found or already handled: {e}")
+            self.logger.info(
+                f"Language switch modal not found or already handled: e")
 
         body = self.driver.page_source
-        response = HtmlResponse(self.driver.current_url, body=body, encoding='utf-8', request=response.request)
+        response = HtmlResponse(
+            self.driver.current_url, body=body, encoding='utf-8', request=response.request)
 
         # Extract links to restaurant detail pages
-        restaurant_links = response.css('a.list-rst__rst-name-target::attr(href)').getall()
-        
+        restaurant_links = response.css(
+            'a.list-rst__rst-name-target::attr(href)').getall()
+
         for link in restaurant_links:
             if self.collected_links < self.num_restaurants:
                 self.collected_links += 1
@@ -66,7 +80,8 @@ class RestaurantsSpider(scrapy.Spider):
         if self.collected_links < self.num_restaurants:
             # Handle next page
 
-            next_page = response.css('a.c-pagination__arrow--next::attr(href)').get()
+            next_page = response.css(
+                'a.c-pagination__arrow--next::attr(href)').get()
             if next_page:
                 yield scrapy.Request(response.urljoin(next_page), callback=self.parse)
 
@@ -75,7 +90,8 @@ class RestaurantsSpider(scrapy.Spider):
         try:
             # Wait for the modal to appear (up to 10 seconds)
             WebDriverWait(self.driver, 2).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, 'div.c-lang-switch__inner.js-lang-change-text-en'))
+                EC.presence_of_element_located(
+                    (By.CSS_SELECTOR, 'div.c-lang-switch__inner.js-lang-change-text-en'))
             )
 
             # Find and click the "Switch to English" button
@@ -87,16 +103,18 @@ class RestaurantsSpider(scrapy.Spider):
 
             # Wait for the page to reload (adjust wait time depending on network speed)
             WebDriverWait(self.driver, 3).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, 'a.list-rst__rst-name-target'))
+                EC.presence_of_element_located(
+                    (By.CSS_SELECTOR, 'a.list-rst__rst-name-target'))
                 # Example element after reload
             )
         except Exception as e:
-            self.logger.info(f"Language switch modal not found or already handled: {e}")
-
+            self.logger.info(
+                f"Language switch modal not found or already handled: e")
 
     def get_headline_description(self, response):
         # Extract the visible part of the description
-        visible_description = response.css('span.pr-comment__first::text').get()
+        visible_description = response.css(
+            'span.pr-comment__first::text').get()
 
         # Extract hidden part of the description
         hidden_description = response.css('span.pr-comment__over::text').get()
@@ -116,27 +134,84 @@ class RestaurantsSpider(scrapy.Spider):
 
         return headline, full_description
 
+    def fetch_specialities_data(self):
+        try:
+            # Check for the 'Specialities' section
+            logger.info("Checking for the 'Specialities' section...")
+            
+            # Wait for the Specialities section to load
+            specialities_section = WebDriverWait(self.driver, 10).until(
+                EC.presence_of_all_elements_located((By.CLASS_NAME, "js-kodawari-cassete"))
+            )
+
+            if not specialities_section:
+                logger.warning("No specialities section found!")
+                return []
+
+            logger.info(f"Found {len(specialities_section)} specialities.")
+
+            # Click on the first speciality item to open the modal
+            first_item = specialities_section[0]
+            self.driver.execute_script("arguments[0].scrollIntoView(true);", first_item)
+            first_item.click()
+            logger.info("Clicked on the first speciality item.")
+
+            # Force rendering of all modal contents
+            self.driver.execute_script(
+                "document.querySelectorAll('.c-modal__contents').forEach(modal => modal.classList.remove('is-hidden'));"
+            )
+
+            # Use JavaScript to get all modal contents
+            modal_contents = self.driver.execute_script(
+                "return Array.from(document.querySelectorAll('.c-modal__contents')).map(modal => {"
+                "    return {"
+                "        image_src: modal.querySelector('.rstdtl-top-kodawari__modal-photo img')?.getAttribute('src') || null,"
+                "        title: modal.querySelector('.rstdtl-top-kodawari__modal-title')?.innerText.trim() || null,"
+                "        comment: modal.querySelector('.rstdtl-top-kodawari__modal-comment')?.innerText.trim() || null"
+                "    };"
+                "});"
+            )
+
+            logger.info(f"Extracted {len(modal_contents)} modal contents.")
+
+            # Close the modal at the end
+            try:
+                close_button = WebDriverWait(self.driver, 5).until(
+                    EC.element_to_be_clickable((By.CLASS_NAME, "js-modal-close"))
+                )
+                close_button.click()
+                logger.info("Closed the modal.")
+            except Exception as e:
+                logger.warning(f"Failed to close the modal: {e}")
+
+            return modal_contents
+
+        except Exception as e:
+            logger.error(f"Failed to retrieve 'Specialities' data: {e}")
+            return []
+
     def parse_detail(self, response):
         self.driver.get(response.url)
         self.switch_to_english()
         body = self.driver.page_source
-        response = HtmlResponse(self.driver.current_url, body=body, encoding='utf-8', request=response.request)
+        response = HtmlResponse(
+            self.driver.current_url, body=body, encoding='utf-8', request=response.request)
 
         headline, full_description = self.get_headline_description(response)
 
+        specialities = self.fetch_specialities_data()
+
         data = {
-            "editorial_overview":{
+            "editorial_overview": {
                 "headline": headline,
                 "description": full_description,
             },
-            "review_rating": {
-
-            },
-
+            "review_rating": {},
+            "specialities": specialities,
             'url': response.url
         }
 
-        self.logger.info(data)
+        # self.logger.info(data)
 
         # Navigate to the Ratings section (optional next step)
 
@@ -145,21 +220,22 @@ class RestaurantsSpider(scrapy.Spider):
             ratings_url = response.css('a#rating::attr(href)').get()
 
             if ratings_url:
-                self.logger.info(f"Found Ratings URL: {ratings_url}")
+                # self.logger.info(f"Found Ratings URL: {ratings_url}")
 
                 # Navigate to the Ratings page using Selenium
                 self.driver.get(ratings_url)
 
                 # Wait for the Ratings page to load
                 WebDriverWait(self.driver, 3).until(EC.presence_of_element_located(
-                    (By.CSS_SELECTOR, 'div.ratings-contents')))  # Ensure the ratings section has loaded
+                    # Ensure the ratings section has loaded
+                    (By.CSS_SELECTOR, 'div.ratings-contents')))
 
                 # Get the current page source for scraping
                 body = self.driver.page_source
                 ratings_response = HtmlResponse(self.driver.current_url, body=body, encoding='utf-8',
                                                 request=response.request)
 
-                logger.info("Extracting average ratings...")
+                # logger.info("Extracting average ratings...")
 
                 # Extract Average Ratings
                 average_ratings = {}
@@ -170,8 +246,8 @@ class RestaurantsSpider(scrapy.Spider):
                 rating_scores = ratings_response.css(
                     'dl.ratings-contents__table dd.ratings-contents__table-score::text').getall()
 
-                logger.info(f"Found rating titles: {rating_titles}")
-                logger.info(f"Found rating scores: {rating_scores}")
+                # logger.info(f"Found rating titles: {rating_titles}")
+                # logger.info(f"Found rating scores: {rating_scores}")
 
                 if not rating_titles or not rating_scores:
                     logger.warning("Rating titles or scores are missing!")
@@ -179,15 +255,14 @@ class RestaurantsSpider(scrapy.Spider):
                     # Combine titles and scores into a dictionary
                     for title, score in zip(rating_titles, rating_scores):
                         average_ratings[title.strip()] = float(score.strip())
-                    logger.info(f"Extracted average ratings: {average_ratings}")
+                    # logger.info(f"Extracted average ratings: {average_ratings}")
 
                 # Extract Rating Distribution
-                logger.info("Extracting rating distribution...")
+                # logger.info("Extracting rating distribution...")
                 rating_distribution = []
 
                 # Find all distribution items
                 distribution_items = ratings_response.css('li.ratings-contents__item')
-                logger.info(f"Found {len(distribution_items)} distribution items.")
 
                 if not distribution_items:
                     logger.warning("No distribution items found! Check the page structure.")
@@ -197,27 +272,31 @@ class RestaurantsSpider(scrapy.Spider):
                         try:
                             # Get the range (e.g., "5.0", "4.5 - 4.9")
                             rating_range = item.css(
-                                'b.c-rating-v2__val.c-rating-v2__val--strong.ratings-contents__item-score::text').get().strip()
-                            logger.info(f"Item {index}: Found rating range '{rating_range}'")
+                                'b.c-rating-v2__val.c-rating-v2__val--strong.ratings-contents__item-score::text'
+                            ).get()
+                            rating_range = rating_range.strip() if rating_range else None
 
                             # Extract percentage width (e.g., "7%") from inline style
-                            percentage_width = item.css('span.ratings-contents__item-gauge::attr(style)').re_first(
-                                r'width:\s*(\d+)%')
-                            logger.info(f"Item {index}: Found percentage width '{percentage_width}'")
+                            percentage_width = item.css(
+                                'span.ratings-contents__item-gauge::attr(style)'
+                            ).re_first(r'width:\s*(\d+)%')
+                            percentage_width = int(percentage_width) if percentage_width else 0
 
                             # Get people count (number of individuals who gave this rating)
-                            people_count = item.css('strong.ratings-contents__item-num-strong::text').get().strip()
-                            logger.info(f"Item {index}: Found people count '{people_count}'")
+                            people_count = item.css(
+                                'strong.ratings-contents__item-num-strong::text'
+                            ).get()
+                            people_count = int(people_count.strip()) if people_count else 0
 
-                            rating_distribution.append({
-                                "range": rating_range,
-                                "percentage": int(percentage_width) if percentage_width else 0,
-                                "people": int(people_count)
-                            })
+                            # Append the extracted data to the list
+                            if rating_range:
+                                rating_distribution.append({
+                                    "range": rating_range,
+                                    "percentage": percentage_width,
+                                    "people": people_count
+                                })
                         except Exception as e:
-                            logger.error(f"Error extracting distribution item {index}: {e}")
-
-                logger.info(f"Extracted rating distribution: {rating_distribution}")
+                            logger.error(f"Error extracting distribution item {index}: e")
 
                 # Add extracted data to review_rating
                 data["review_rating"] = {
@@ -226,9 +305,9 @@ class RestaurantsSpider(scrapy.Spider):
                 }
 
                 # Log the final structured data
-                logger.info(f"Final extracted ratings data: {data['review_rating']}")
+                # logger.info(f"Final extracted ratings data: {data['review_rating']}")
         except Exception as e:
-            self.logger.error(f"Error navigating to Ratings page: {e}")
+            self.logger.error(f"Error navigating to Ratings page: e")
 
         # Yield the final result
         yield data
