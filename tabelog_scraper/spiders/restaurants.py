@@ -22,7 +22,7 @@ class RestaurantsSpider(scrapy.Spider):
     allowed_domains = ["tabelog.com"]
     start_urls = ['https://tabelog.com/tokyo/A1303/']
 
-    def __init__(self, num_restaurants=2, *args, **kwargs):
+    def __init__(self, num_restaurants=1, *args, **kwargs):
         super(RestaurantsSpider, self).__init__(*args, **kwargs)
         # Desired number of restaurant links
         self.num_restaurants = int(num_restaurants)
@@ -189,6 +189,59 @@ class RestaurantsSpider(scrapy.Spider):
         except Exception as e:
             logger.error(f"Failed to retrieve 'Specialities' data: {e}")
             return []
+        
+    def navigate_and_setmenu(self):
+        try:
+            # Wait for the parent container of the "View more set menu" link
+            WebDriverWait(self.driver, 15).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, 'div.rstdtl-top-course__footer'))
+            )
+
+            # Check if the "View more set menu" link is available
+            view_more_link = self.driver.find_elements(By.CSS_SELECTOR, 'div.rstdtl-top-course__footer a.c-link-circle')
+            if not view_more_link:
+                logger.warning("The 'View more set menu' link is not available.")
+                return []
+
+            logger.info("Found 'View more set menu' link.")
+
+            # Wait for the link to be clickable
+            view_more_link = WebDriverWait(self.driver, 15).until(
+                EC.element_to_be_clickable((By.CSS_SELECTOR, 'div.rstdtl-top-course__footer a.c-link-circle'))
+            )
+
+            # Log the href attribute of the link
+            link_href = view_more_link.get_attribute('href')
+            logger.info(f"Navigating to: {link_href}")
+
+            # Scroll the link into view and click using JavaScript to avoid interception
+            self.driver.execute_script("arguments[0].scrollIntoView(true);", view_more_link)
+            self.driver.execute_script("arguments[0].click();", view_more_link)
+            logger.info("Navigated to the 'View more set menu' page.")
+
+            # Wait for the Set Menu section to load on the new page
+            WebDriverWait(self.driver, 15).until(
+                EC.presence_of_element_located((By.CLASS_NAME, 'rstdtl-course-list'))
+            )
+
+            # Extract Set Menu data
+            set_menu_data = self.driver.execute_script(
+                "return Array.from(document.querySelectorAll('.rstdtl-course-list')).map(menu => {"
+                "    return {"
+                "        title: menu.querySelector('.rstdtl-course-list__course-title-text')?.innerText.trim() || null,"
+                "        description: menu.querySelector('.rstdtl-course-list__desc')?.innerText.trim() || null,"
+                "        price: menu.querySelector('.rstdtl-course-list__price-num em')?.innerText.trim() || null,"
+                "        link: menu.querySelector('.rstdtl-course-list__target')?.getAttribute('href') || null"
+                "    };"
+                "});"
+            )
+
+            logger.info(f"Extracted {len(set_menu_data)} set menu items.")
+            return set_menu_data
+
+        except Exception as e:
+            logger.error(f"Failed to navigate to 'View more set menu': {e}")
+            return []
 
     def parse_detail(self, response):
         self.driver.get(response.url)
@@ -200,6 +253,10 @@ class RestaurantsSpider(scrapy.Spider):
         headline, full_description = self.get_headline_description(response)
 
         specialities = self.fetch_specialities_data()
+        
+        setmenu = self.navigate_and_setmenu()
+        
+        print("Sepecialies ",specialities)
 
         data = {
             "editorial_overview": {
@@ -208,6 +265,7 @@ class RestaurantsSpider(scrapy.Spider):
             },
             "review_rating": {},
             "specialities": specialities,
+            "set_menu": setmenu,
             'url': response.url
         }
 
