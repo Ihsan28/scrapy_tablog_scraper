@@ -306,6 +306,38 @@ class RestaurantsSpider(scrapy.Spider):
                 "feature_related_info": []
             }
 
+    def navigate_to_photos(self):
+        try:
+            # Wait for the Photos link in the navigation menu to appear
+            photos_link = WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, "li#rdnavi-photo a.mainnavi"))
+            )
+
+            # Log the href attribute of the Photos link
+            photos_url = photos_link.get_attribute('href')
+            logger.info(f"Navigating to Photos page: {photos_url}")
+
+            # Click the Photos link
+            self.driver.execute_script("arguments[0].scrollIntoView(true);", photos_link)
+            photos_link.click()
+
+            # Wait for the Photos page to load
+            WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located((By.CLASS_NAME, "rstdtl-photo"))
+            )
+
+            # Extract only the Official Photos URLs
+            official_photo_urls = self.driver.execute_script(
+                "return Array.from(document.querySelectorAll('.rstdtl-thumb-list__item img')).map(img => img.getAttribute('src'));"
+            )
+
+            logger.info(f"Extracted {len(official_photo_urls)} official photo URLs.")
+            return official_photo_urls
+
+        except Exception as e:
+            logger.error(f"Failed to navigate to Official Photos page: {e}")
+            return []
+
     def parse_detail(self, response):
         self.driver.get(response.url)
         self.switch_to_english()
@@ -321,7 +353,9 @@ class RestaurantsSpider(scrapy.Spider):
         
         restaurant_information = self.parse_restaurant_inaformation()
         
-        print("Sepecialies ",specialities)
+        interior_photos = self.navigate_to_photos()
+        
+        # print("Sepecialies ",specialities)
 
         data = {
             "editorial_overview": {
@@ -332,7 +366,7 @@ class RestaurantsSpider(scrapy.Spider):
             "specialities": specialities,
             "set_menu": setmenu,
             "restaurant_information": restaurant_information,
-            # "seats_facilities": seats_facilities,
+            "interior_photos": interior_photos,
             'url': response.url
         }
 
