@@ -20,7 +20,7 @@ logging.getLogger('scrapy').setLevel(logging.WARNING)
 class RestaurantsSpider(scrapy.Spider):
     name = "restaurants"
     allowed_domains = ["tabelog.com"]
-    start_urls = ['https://tabelog.com/tokyo/A1303/']
+    start_urls = ['https://tabelog.com/en/tokyo/A1303/rstLst/?LstSitu=2']
 
     def __init__(self, num_restaurants=1, *args, **kwargs):
         super(RestaurantsSpider, self).__init__(*args, **kwargs)
@@ -218,44 +218,63 @@ class RestaurantsSpider(scrapy.Spider):
             self.driver.execute_script("arguments[0].scrollIntoView(true);", menu_tab)
             menu_tab.click()
 
-            # Wait for the Set Menu sublink to appear
-            set_menu_link = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, "li.rstdtl-navi__sublist-item a[href*='/party/']"))
-            )
+            # Define a dictionary to store menu data from all tabs
+            menu_data = {}
 
-            # Log the href attribute of the Set Menu link
-            set_menu_url = set_menu_link.get_attribute('href')
-            logger.info(f"Navigating to Set Menu page: {set_menu_url}")
+            # Define the tabs to navigate (Set Menu, Food, Drink, Lunch)
+            menu_tabs = {
+                "Set Menu": "li.rstdtl-navi__sublist-item a[href*='/party/']",
+                "Food": "li.rstdtl-navi__sublist-item a[href*='/dtlmenu/food/']",
+                "Drink": "li.rstdtl-navi__sublist-item a[href*='/dtlmenu/drink/']",
+                "Lunch": "li.rstdtl-navi__sublist-item a[href*='/dtlmenu/lunch/']"
+            }
 
-            # Click the Set Menu link
-            self.driver.execute_script("arguments[0].scrollIntoView(true);", set_menu_link)
-            set_menu_link.click()
+            for tab_name, tab_selector in menu_tabs.items():
+                try:
+                    # Wait for the tab link to appear
+                    tab_link = WebDriverWait(self.driver, 5).until(
+                        EC.presence_of_element_located((By.CSS_SELECTOR, tab_selector))
+                    )
 
-            # Wait for the Set Menu section to load
-            WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.CLASS_NAME, 'rstdtl-course-list'))
-            )
+                    # Log the href attribute of the tab
+                    tab_url = tab_link.get_attribute('href')
+                    logger.info(f"Navigating to {tab_name} tab: {tab_url}")
 
-            # Extract Set Menu data, including image source and available time
-            set_menu_data = self.driver.execute_script(
-                "return Array.from(document.querySelectorAll('.rstdtl-course-list')).map(menu => {"
-                "    return {"
-                "        title: menu.querySelector('.rstdtl-course-list__course-title-text')?.innerText.trim() || null,"
-                "        description: menu.querySelector('.rstdtl-course-list__desc')?.innerText.trim() || null,"
-                "        price: menu.querySelector('.rstdtl-course-list__price-num em')?.innerText.trim() || null,"
-                "        link: menu.querySelector('.rstdtl-course-list__target')?.getAttribute('href') || null,"
-                "        image_src: menu.querySelector('.rstdtl-course-list__img-target img')?.getAttribute('src') || null,"
-                "        available_time: menu.querySelector('.rstdtl-course-list__course-rule dd')?.innerText.trim() || null"
-                "    };"
-                "});"
-            )
+                    # Click the tab link
+                    self.driver.execute_script("arguments[0].scrollIntoView(true);", tab_link)
+                    tab_link.click()
 
-            logger.info(f"Extracted {len(set_menu_data)} set menu items.")
-            return set_menu_data
+                    # Wait for the menu section to load
+                    WebDriverWait(self.driver, 5).until(
+                        EC.presence_of_element_located((By.CLASS_NAME, 'rstdtl-course-list'))
+                    )
+
+                    # Extract menu data
+                    tab_menu_data = self.driver.execute_script(
+                        "return Array.from(document.querySelectorAll('.rstdtl-course-list')).map(menu => {"
+                        "    return {"
+                        "        title: menu.querySelector('.rstdtl-course-list__course-title-text')?.innerText.trim() || null,"
+                        "        description: menu.querySelector('.rstdtl-course-list__desc')?.innerText.trim() || null,"
+                        "        price: menu.querySelector('.rstdtl-course-list__price-num em')?.innerText.trim() || null,"
+                        "        link: menu.querySelector('.rstdtl-course-list__target')?.getAttribute('href') || null,"
+                        "        image_src: menu.querySelector('.rstdtl-course-list__img-target img')?.getAttribute('src') || null,"
+                        "        available_time: menu.querySelector('.rstdtl-course-list__course-rule dd')?.innerText.trim() || null"
+                        "    };"
+                        "});"
+                    )
+
+                    logger.info(f"Extracted {len(tab_menu_data)} items from {tab_name} tab.")
+                    menu_data[tab_name] = tab_menu_data
+
+                except Exception as e:
+                    logger.warning(f"Failed to navigate to {tab_name} tab or extract data: {e}")
+                    menu_data[tab_name] = []
+
+            return menu_data
 
         except Exception as e:
-            logger.error(f"Failed to navigate to Set Menu through Menu tab: {e}")
-            return []
+            logger.error(f"Failed to navigate to Menu tab: {e}")
+            return {}
 
     def parse_restaurant_information(self):
         try:
@@ -396,7 +415,7 @@ class RestaurantsSpider(scrapy.Spider):
             },
             "review_rating": {},
             "specialities": specialities,
-            "set_menu": setmenu,
+            "menu": setmenu,
             "restaurant_information": restaurant_information,
             "interior_photos": interior_photos,
             'url': response.url
