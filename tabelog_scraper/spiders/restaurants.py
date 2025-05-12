@@ -223,16 +223,18 @@ class RestaurantsSpider(scrapy.Spider):
 
             # Define the tabs to navigate (Set Menu, Food, Drink, Lunch)
             menu_tabs = {
-                "Set Menu": "li.rstdtl-navi__sublist-item a[href*='/party/']",
-                "Food": "li.rstdtl-navi__sublist-item a[href*='/dtlmenu/food/']",
+                "Set_Menu": "li.rstdtl-navi__sublist-item a[href*='/party/']",
+                "Food": "li.rstdtl-navi__sublist-item a[href*='/dtlmenu/']",
                 "Drink": "li.rstdtl-navi__sublist-item a[href*='/dtlmenu/drink/']",
                 "Lunch": "li.rstdtl-navi__sublist-item a[href*='/dtlmenu/lunch/']"
             }
 
             for tab_name, tab_selector in menu_tabs.items():
                 try:
+                    logger.info(f"Looking for {tab_name} tab using selector: {tab_selector}")
+
                     # Wait for the tab link to appear
-                    tab_link = WebDriverWait(self.driver, 5).until(
+                    tab_link = WebDriverWait(self.driver, 10).until(
                         EC.presence_of_element_located((By.CSS_SELECTOR, tab_selector))
                     )
 
@@ -240,28 +242,38 @@ class RestaurantsSpider(scrapy.Spider):
                     tab_url = tab_link.get_attribute('href')
                     logger.info(f"Navigating to {tab_name} tab: {tab_url}")
 
-                    # Click the tab link
+                    # Scroll to the tab link and click it
                     self.driver.execute_script("arguments[0].scrollIntoView(true);", tab_link)
                     tab_link.click()
-
-                    # Wait for the menu section to load
-                    WebDriverWait(self.driver, 5).until(
-                        EC.presence_of_element_located((By.CLASS_NAME, 'rstdtl-course-list'))
-                    )
-
-                    # Extract menu data
-                    tab_menu_data = self.driver.execute_script(
-                        "return Array.from(document.querySelectorAll('.rstdtl-course-list')).map(menu => {"
-                        "    return {"
-                        "        title: menu.querySelector('.rstdtl-course-list__course-title-text')?.innerText.trim() || null,"
-                        "        description: menu.querySelector('.rstdtl-course-list__desc')?.innerText.trim() || null,"
-                        "        price: menu.querySelector('.rstdtl-course-list__price-num em')?.innerText.trim() || null,"
-                        "        link: menu.querySelector('.rstdtl-course-list__target')?.getAttribute('href') || null,"
-                        "        image_src: menu.querySelector('.rstdtl-course-list__img-target img')?.getAttribute('src') || null,"
-                        "        available_time: menu.querySelector('.rstdtl-course-list__course-rule dd')?.innerText.trim() || null"
-                        "    };"
-                        "});"
-                    )
+                    
+                    logger.info(f"Clicked on {tab_name} tab.")
+                    
+                    # delay to allow the page to load
+                    time.sleep(2)
+                    
+                    if tab_name == "Set_Menu":
+                        # Wait for the Set Menu section to load
+                        WebDriverWait(self.driver, 10).until(
+                            EC.presence_of_element_located((By.CLASS_NAME, "rstdtl-course-list"))
+                        )
+                    else:
+                        # Wait for the menu section to load
+                        WebDriverWait(self.driver, 10).until(
+                            EC.presence_of_element_located((By.CLASS_NAME, "rstdtl-menu-lst"))
+                        )
+                        
+                    # Call the appropriate method based on the tab
+                    if tab_name == "Set_Menu":
+                        print("Extracting Set Menu data...")
+                        tab_menu_data = self.extract_set_menu()
+                    elif tab_name == "Food":
+                        tab_menu_data = self.extract_food_menu()
+                    elif tab_name == "Drink":
+                        tab_menu_data = self.extract_drink_menu()
+                    elif tab_name == "Lunch":
+                        tab_menu_data = self.extract_lunch_menu()
+                    else:
+                        tab_menu_data = []
 
                     logger.info(f"Extracted {len(tab_menu_data)} items from {tab_name} tab.")
                     menu_data[tab_name] = tab_menu_data
@@ -389,6 +401,93 @@ class RestaurantsSpider(scrapy.Spider):
 
         except Exception as e:
             logger.error(f"Failed to navigate to Interior Photos page: {e}")
+            return []
+
+    def extract_food_menu(self):
+        try:
+
+            # Extract food menu items
+            food_menu_data = self.driver.execute_script(
+                "return Array.from(document.querySelectorAll('.rstdtl-menu-lst__contents')).map(item => {"
+                "    const title = item.querySelector('.rstdtl-menu-lst__menu-title')?.innerText.trim() || null;"
+                "    const price = item.querySelector('.rstdtl-menu-lst__price')?.innerText.trim() || null;"
+                "    const description = item.querySelector('.rstdtl-menu-lst__ex')?.innerText.trim() || null;"
+                "    const image_src = item.querySelector('.rstdtl-menu-lst__img img')?.getAttribute('src') || null;"
+                "    return { title, price, description, image_src };"
+                "});"
+            )
+
+            logger.info(f"Extracted {len(food_menu_data)} food menu items.")
+            return food_menu_data
+
+        except Exception as e:
+            logger.error(f"Failed to extract food menu data: {e}")
+            return []
+
+    def extract_set_menu(self):
+        try:
+
+            # Extract menu data
+            set_menu_data = self.driver.execute_script(
+                "return Array.from(document.querySelectorAll('.rstdtl-course-list')).map(menu => {"
+                "    return {"
+                "        title: menu.querySelector('.rstdtl-course-list__course-title-text')?.innerText.trim() || null,"
+                "        description: menu.querySelector('.rstdtl-course-list__desc')?.innerText.trim() || null,"
+                "        price: menu.querySelector('.rstdtl-course-list__price-num em')?.innerText.trim() || null,"
+                "        link: menu.querySelector('.rstdtl-course-list__target')?.getAttribute('href') || null,"
+                "        image_src: menu.querySelector('.rstdtl-course-list__img-target img')?.getAttribute('src') || null,"
+                "        available_time: menu.querySelector('.rstdtl-course-list__course-rule dd')?.innerText.trim() || null"
+                "    };"
+                "});"
+            )
+
+            logger.info(f"Extracted {len(set_menu_data)} set menu items.")
+            return set_menu_data
+
+        except Exception as e:
+            logger.error(f"Failed to extract set menu data: {e}")
+            return []
+
+    def extract_drink_menu(self):
+        try:
+
+            # Extract drink menu items
+            drink_menu_data = self.driver.execute_script(
+                "return Array.from(document.querySelectorAll('.rstdtl-menu-lst__contents')).map(item => {"
+                "    const title = item.querySelector('.rstdtl-menu-lst__menu-title')?.innerText.trim() || null;"
+                "    const price = item.querySelector('.rstdtl-menu-lst__price')?.innerText.trim() || null;"
+                "    const description = item.querySelector('.rstdtl-menu-lst__ex')?.innerText.trim() || null;"
+                "    const image_src = item.querySelector('.rstdtl-menu-lst__img img')?.getAttribute('src') || null;"
+                "    return { title, price, description, image_src };"
+                "});"
+            )
+
+            logger.info(f"Extracted {len(drink_menu_data)} drink menu items.")
+            return drink_menu_data
+
+        except Exception as e:
+            logger.error(f"Failed to extract drink menu data: {e}")
+            return []
+
+    def extract_lunch_menu(self):
+        try:
+
+            # Extract lunch menu items
+            lunch_menu_data = self.driver.execute_script(
+                "return Array.from(document.querySelectorAll('.rstdtl-menu-lst__contents')).map(item => {"
+                "    const title = item.querySelector('.rstdtl-menu-lst__menu-title')?.innerText.trim() || null;"
+                "    const price = item.querySelector('.rstdtl-menu-lst__price')?.innerText.trim() || null;"
+                "    const description = item.querySelector('.rstdtl-menu-lst__ex')?.innerText.trim() || null;"
+                "    const image_src = item.querySelector('.rstdtl-menu-lst__img img')?.getAttribute('src') || null;"
+                "    return { title, price, description, image_src };"
+                "});"
+            )
+
+            logger.info(f"Extracted {len(lunch_menu_data)} lunch menu items.")
+            return lunch_menu_data
+
+        except Exception as e:
+            logger.error(f"Failed to extract lunch menu data: {e}")
             return []
 
     def parse_detail(self, response):
