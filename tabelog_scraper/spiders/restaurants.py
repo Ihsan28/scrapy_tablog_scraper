@@ -192,35 +192,47 @@ class RestaurantsSpider(scrapy.Spider):
         
     def navigate_and_setmenu(self):
         try:
-            # Wait for the parent container of the "View more set menu" link
-            WebDriverWait(self.driver, 15).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, 'div.rstdtl-top-course__footer'))
+            # Wait for the Menu tab to appear
+            menu_tab = WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, "li#rdnavi-menu a.mainnavi"))
             )
 
-            # Check if the "View more set menu" link is available
-            view_more_link = self.driver.find_elements(By.CSS_SELECTOR, 'div.rstdtl-top-course__footer a.c-link-circle')
-            if not view_more_link:
-                logger.warning("The 'View more set menu' link is not available.")
-                return []
+            # Check if an overlay is present and close it
+            try:
+                overlay = WebDriverWait(self.driver, 5).until(
+                    EC.presence_of_element_located((By.CSS_SELECTOR, "div.c-overlay.js-overlay"))
+                )
+                if overlay:
+                    logger.info("Closing overlay...")
+                    self.driver.execute_script("arguments[0].click();", overlay)
+                    WebDriverWait(self.driver, 5).until(EC.invisibility_of_element(overlay))
+                    logger.info("Overlay closed.")
+            except Exception as e:
+                logger.info("No overlay found or already handled.")
 
-            logger.info("Found 'View more set menu' link.")
+            # Log the href attribute of the Menu tab
+            menu_tab_url = menu_tab.get_attribute('href')
+            logger.info(f"Navigating to Menu tab: {menu_tab_url}")
 
-            # Wait for the link to be clickable
-            view_more_link = WebDriverWait(self.driver, 15).until(
-                EC.element_to_be_clickable((By.CSS_SELECTOR, 'div.rstdtl-top-course__footer a.c-link-circle'))
+            # Click the Menu tab
+            self.driver.execute_script("arguments[0].scrollIntoView(true);", menu_tab)
+            menu_tab.click()
+
+            # Wait for the Set Menu sublink to appear
+            set_menu_link = WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, "li.rstdtl-navi__sublist-item a[href*='/party/']"))
             )
 
-            # Log the href attribute of the link
-            link_href = view_more_link.get_attribute('href')
-            logger.info(f"Navigating to: {link_href}")
+            # Log the href attribute of the Set Menu link
+            set_menu_url = set_menu_link.get_attribute('href')
+            logger.info(f"Navigating to Set Menu page: {set_menu_url}")
 
-            # Scroll the link into view and click using JavaScript to avoid interception
-            self.driver.execute_script("arguments[0].scrollIntoView(true);", view_more_link)
-            self.driver.execute_script("arguments[0].click();", view_more_link)
-            logger.info("Navigated to the 'View more set menu' page.")
+            # Click the Set Menu link
+            self.driver.execute_script("arguments[0].scrollIntoView(true);", set_menu_link)
+            set_menu_link.click()
 
-            # Wait for the Set Menu section to load on the new page
-            WebDriverWait(self.driver, 15).until(
+            # Wait for the Set Menu section to load
+            WebDriverWait(self.driver, 10).until(
                 EC.presence_of_element_located((By.CLASS_NAME, 'rstdtl-course-list'))
             )
 
@@ -242,7 +254,7 @@ class RestaurantsSpider(scrapy.Spider):
             return set_menu_data
 
         except Exception as e:
-            logger.error(f"Failed to navigate to 'View more set menu': {e}")
+            logger.error(f"Failed to navigate to Set Menu through Menu tab: {e}")
             return []
 
     def parse_restaurant_information(self):
