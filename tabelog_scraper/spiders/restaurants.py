@@ -245,7 +245,7 @@ class RestaurantsSpider(scrapy.Spider):
             logger.error(f"Failed to navigate to 'View more set menu': {e}")
             return []
 
-    def parse_restaurant_inaformation(self):
+    def parse_restaurant_information(self):
         try:
             # Wait for the restaurant information section to load
             WebDriverWait(self.driver, 15).until(
@@ -258,7 +258,7 @@ class RestaurantsSpider(scrapy.Spider):
                 "    const section = title.innerText.trim();"
                 "    const rows = Array.from(title.nextElementSibling.querySelectorAll('tr')).map(row => {"
                 "        const field = row.querySelector('th')?.innerText.trim() || null;"
-                "        const value = Array.from(row.querySelectorAll('td p')).map(p => p.innerText.trim()).join(' ') || null;"
+                "        const value = row.querySelector('td span, td div span, td p')?.innerText.trim() || null;"
                 "        return { field, value };"
                 "    });"
                 "    return { section, rows };"
@@ -326,9 +326,12 @@ class RestaurantsSpider(scrapy.Spider):
                 EC.presence_of_element_located((By.CLASS_NAME, "rstdtl-photo"))
             )
 
-            # Extract only the Official Photos URLs
+            # Extract only the Official Photos URLs and remove "150x150_square_" from the URLs
             official_photo_urls = self.driver.execute_script(
-                "return Array.from(document.querySelectorAll('.rstdtl-thumb-list__item img')).map(img => img.getAttribute('src'));"
+                "return Array.from(document.querySelectorAll('.rstdtl-thumb-list__item img')).map(img => {"
+                "    let src = img.getAttribute('src');"
+                "    return src.replace('150x150_square_', '');"
+                "});"
             )
 
             logger.info(f"Extracted {len(official_photo_urls)} official photo URLs.")
@@ -351,7 +354,7 @@ class RestaurantsSpider(scrapy.Spider):
         
         setmenu = self.navigate_and_setmenu()
         
-        restaurant_information = self.parse_restaurant_inaformation()
+        restaurant_information = self.parse_restaurant_information()
         
         interior_photos = self.navigate_to_photos()
         
@@ -417,7 +420,6 @@ class RestaurantsSpider(scrapy.Spider):
                     # logger.info(f"Extracted average ratings: {average_ratings}")
 
                 # Extract Rating Distribution
-                # logger.info("Extracting rating distribution...")
                 rating_distribution = []
 
                 # Find all distribution items
