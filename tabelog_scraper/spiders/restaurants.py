@@ -306,7 +306,7 @@ class RestaurantsSpider(scrapy.Spider):
                 "feature_related_info": []
             }
 
-    def navigate_to_photos(self):
+    def navigate_and_get_interior_official_photos(self):
         try:
             # Wait for the Photos link in the navigation menu to appear
             photos_link = WebDriverWait(self.driver, 10).until(
@@ -326,19 +326,38 @@ class RestaurantsSpider(scrapy.Spider):
                 EC.presence_of_element_located((By.CLASS_NAME, "rstdtl-photo"))
             )
 
-            # Extract only the Official Photos URLs and remove "150x150_square_" from the URLs
-            official_photo_urls = self.driver.execute_script(
-                "return Array.from(document.querySelectorAll('.rstdtl-thumb-list__item img')).map(img => {"
-                "    let src = img.getAttribute('src');"
-                "    return src.replace('150x150_square_', '');"
-                "});"
+            # Navigate to the Interior tab
+            interior_tab_link = self.driver.find_element(By.CSS_SELECTOR, "a[href*='/dtlphotolst/3/smp2/']")
+            interior_tab_url = interior_tab_link.get_attribute('href')
+            logger.info(f"Navigating to Interior tab: {interior_tab_url}")
+            self.driver.execute_script("arguments[0].click();", interior_tab_link)
+
+            # Wait for the Interior tab to load
+            WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located((By.CLASS_NAME, "rstdtl-thumb-list"))
             )
 
-            logger.info(f"Extracted {len(official_photo_urls)} official photo URLs.")
-            return official_photo_urls
+            # Extract only the Interior Photos URLs
+            interior_photo_urls = self.driver.execute_script(
+                """
+                const officialPhotosSection = Array.from(document.querySelectorAll('.c-heading3.rstdtl-photo__title'))
+                    .find(title => title.innerText.trim() === 'Official photos');
+                if (officialPhotosSection) {
+                    const photoList = officialPhotosSection.nextElementSibling;
+                    return Array.from(photoList.querySelectorAll('.rstdtl-thumb-list__item img')).map(img => {
+                        let src = img.getAttribute('src');
+                        return src.replace('150x150_square_', '');
+                    });
+                }
+                return [];
+                """
+            )
+
+            logger.info(f"Extracted {len(interior_photo_urls)} interior photo URLs.")
+            return interior_photo_urls
 
         except Exception as e:
-            logger.error(f"Failed to navigate to Official Photos page: {e}")
+            logger.error(f"Failed to navigate to Interior Photos page: {e}")
             return []
 
     def parse_detail(self, response):
@@ -356,9 +375,7 @@ class RestaurantsSpider(scrapy.Spider):
         
         restaurant_information = self.parse_restaurant_information()
         
-        interior_photos = self.navigate_to_photos()
-        
-        # print("Sepecialies ",specialities)
+        interior_photos = self.navigate_and_get_interior_official_photos()
 
         data = {
             "editorial_overview": {
@@ -372,10 +389,6 @@ class RestaurantsSpider(scrapy.Spider):
             "interior_photos": interior_photos,
             'url': response.url
         }
-
-        # self.logger.info(data)
-
-        # Navigate to the Ratings section (optional next step)
 
         try:
             # Identify the Ratings URL
