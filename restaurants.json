@@ -63,28 +63,27 @@
         },
         "specialities": [
             {
-                "comment": null,
-                "image_src": null,
-                "title": null
-            },
-            {
                 "comment": "KINKA's aburi sushi includes nigiri, pressed sushi, and rolls. Our aburi pressed sushi features five varieties: shrimp, salmon, mackerel, eel, and beef. We drizzle our special KINKA sauce over the pressed sushi and torch it for a delightful finish. The aburi pressed sushi melts in your mouth, offering a new sensation that can be enjoyed by both Japanese and international guests alike.",
-                "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/71826/320x320_square_71826932.jpg",
+                "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/71826/71826932.jpg",
+                "label": "Food",
                 "title": "\"KINKA Specialty New Sensation Grilled Sushi - 6 Pieces\""
             },
             {
                 "comment": "Kinka is a place where you can casually enjoy delicious food and drinks even if you're alone as a woman. It's perfect for dates and business meetings, but you can also drop by the counter for some tapas and a glass of wine in a relaxed manner. 【Ultimate Nigiri Sushi】 We use plenty of seasonal and fresh ingredients for our nigiri. Lobster, fatty tuna, A5 Wagyu beef, snow crab, sea urchin, salmon roe, fresh scallops... We sincerely look forward to your visit!",
-                "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/62698/320x320_square_62698123.jpg",
+                "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/62698/62698123.jpg",
+                "label": "Space",
                 "title": "\"KINKA\" is Full of Casual Chic Vibes☆"
             },
             {
                 "comment": "Courses start from 4,000 yen and can accommodate up to 66 guests! Whether it's for welcome and farewell parties, girls' nights out, or dates, you can enjoy parties and banquets in a stylish space! You can also rent the place for a private feel, making it perfect for intimate gatherings!",
-                "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/117335/320x320_square_117335758.jpg",
+                "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/117335/117335758.jpg",
+                "label": "Food",
                 "title": "A Rich Variety of Course Menus Available♪"
             },
             {
                 "comment": "KINKA's bartender has created a unique and stylish original cocktail with a \"Japanese\" twist♬ - Fig and Japanese citrus sake sangria - Yuzu morning - Kumazasa highball.",
-                "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/62338/320x320_square_62338349.jpg",
+                "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/62338/62338349.jpg",
+                "label": "Drink",
                 "title": "KINKA Original \"Wa\" Cocktail"
             }
         ],

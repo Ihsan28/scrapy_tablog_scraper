@@ -20,7 +20,7 @@ logging.getLogger('scrapy').setLevel(logging.WARNING)
 class RestaurantsSpider(scrapy.Spider):
     name = "restaurants"
     allowed_domains = ["tabelog.com"]
-    start_urls = ['https://tabelog.com/en/tokyo/A1303/rstLst/?LstSitu=2']
+    start_urls = ['https://tabelog.com/tokyo/A1303/rstLst/?LstSitu=2']
 
     def __init__(self, num_restaurants=1, *args, **kwargs):
         super(RestaurantsSpider, self).__init__(*args, **kwargs)
@@ -37,22 +37,23 @@ class RestaurantsSpider(scrapy.Spider):
 
     def parse(self, response):
         self.driver.get(response.url)
+        
         try:
             # Wait for the modal to appear (up to 10 seconds)
-            WebDriverWait(self.driver, 5).until(
+            WebDriverWait(self.driver, 10).until(
                 EC.presence_of_element_located(
                     (By.CSS_SELECTOR, 'div.c-lang-switch__inner.js-lang-change-text-en'))
             )
 
             # Find and click the "Switch to English" button
-            switch_to_english_button = WebDriverWait(self.driver, 5).until(
+            switch_to_english_button = WebDriverWait(self.driver, 10).until(
                 EC.element_to_be_clickable(
                     (By.CSS_SELECTOR, 'a.c-btn.c-lang-switch__btn.js-inbound-link.js-analytics-lang-switch'))
             )
             switch_to_english_button.click()
 
             # Wait for the page to reload (adjust wait time depending on network speed)
-            WebDriverWait(self.driver, 5).until(
+            WebDriverWait(self.driver, 10).until(
                 EC.presence_of_element_located(
                     (By.CSS_SELECTOR, 'a.list-rst__rst-name-target'))
                 # Example element after reload
@@ -94,11 +95,11 @@ class RestaurantsSpider(scrapy.Spider):
         headline, full_description = self.get_headline_description(response)
 
         specialities = self.fetch_specialities_data()
-        
+
         setmenu = self.navigate_to_menu()
-        
+
         restaurant_information = self.parse_restaurant_information()
-        
+
         interior_photos = self.navigate_and_get_interior_official_photos()
 
         data = {
@@ -160,10 +161,12 @@ class RestaurantsSpider(scrapy.Spider):
                 rating_distribution = []
 
                 # Find all distribution items
-                distribution_items = ratings_response.css('li.ratings-contents__item')
+                distribution_items = ratings_response.css(
+                    'li.ratings-contents__item')
 
                 if not distribution_items:
-                    logger.warning("No distribution items found! Check the page structure.")
+                    logger.warning(
+                        "No distribution items found! Check the page structure.")
                 else:
                     # Loop through each item and extract details
                     for index, item in enumerate(distribution_items, start=1):
@@ -178,13 +181,15 @@ class RestaurantsSpider(scrapy.Spider):
                             percentage_width = item.css(
                                 'span.ratings-contents__item-gauge::attr(style)'
                             ).re_first(r'width:\s*(\d+)%')
-                            percentage_width = int(percentage_width) if percentage_width else 0
+                            percentage_width = int(
+                                percentage_width) if percentage_width else 0
 
                             # Get people count (number of individuals who gave this rating)
                             people_count = item.css(
                                 'strong.ratings-contents__item-num-strong::text'
                             ).get()
-                            people_count = int(people_count.strip()) if people_count else 0
+                            people_count = int(
+                                people_count.strip()) if people_count else 0
 
                             # Append the extracted data to the list
                             if rating_range:
@@ -194,7 +199,8 @@ class RestaurantsSpider(scrapy.Spider):
                                     "people": people_count
                                 })
                         except Exception as e:
-                            logger.error(f"Error extracting distribution item {index}: e")
+                            logger.error(
+                                f"Error extracting distribution item {index}: e")
 
                 # Add extracted data to review_rating
                 data["review_rating"] = {
@@ -290,11 +296,12 @@ class RestaurantsSpider(scrapy.Spider):
             modal_contents = self.driver.execute_script(
                 "return Array.from(document.querySelectorAll('.c-modal__contents')).map(modal => {"
                 "    return {"
-                "        image_src: modal.querySelector('.rstdtl-top-kodawari__modal-photo img')?.getAttribute('src') || null,"
+                "        image_src: modal.querySelector('.rstdtl-top-kodawari__modal-photo img')?.getAttribute('src')?.replace('320x320_square_', '') || null,"
                 "        title: modal.querySelector('.rstdtl-top-kodawari__modal-title')?.innerText.trim() || null,"
-                "        comment: modal.querySelector('.rstdtl-top-kodawari__modal-comment')?.innerText.trim() || null"
+                "        comment: modal.querySelector('.rstdtl-top-kodawari__modal-comment')?.innerText.trim() || null,"
+                "        label: modal.querySelector('.rstdtl-top-kodawari__modal-label')?.innerText.trim() || null"
                 "    };"
-                "});"
+                "}).filter(item => item.image_src !== null);"
             )
 
             logger.info(f"Extracted {len(modal_contents)} modal contents.")
@@ -319,18 +326,22 @@ class RestaurantsSpider(scrapy.Spider):
         try:
             # Wait for the Menu tab to appear
             menu_tab = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, "li#rdnavi-menu a.mainnavi"))
+                EC.presence_of_element_located(
+                    (By.CSS_SELECTOR, "li#rdnavi-menu a.mainnavi"))
             )
 
             # Check if an overlay is present and close it
             try:
                 overlay = WebDriverWait(self.driver, 5).until(
-                    EC.presence_of_element_located((By.CSS_SELECTOR, "div.c-overlay.js-overlay"))
+                    EC.presence_of_element_located(
+                        (By.CSS_SELECTOR, "div.c-overlay.js-overlay"))
                 )
                 if overlay:
                     logger.info("Closing overlay...")
-                    self.driver.execute_script("arguments[0].click();", overlay)
-                    WebDriverWait(self.driver, 5).until(EC.invisibility_of_element(overlay))
+                    self.driver.execute_script(
+                        "arguments[0].click();", overlay)
+                    WebDriverWait(self.driver, 5).until(
+                        EC.invisibility_of_element(overlay))
                     logger.info("Overlay closed.")
             except Exception as e:
                 logger.info("No overlay found or already handled.")
@@ -340,7 +351,8 @@ class RestaurantsSpider(scrapy.Spider):
             logger.info(f"Navigating to Menu tab: {menu_tab_url}")
 
             # Click the Menu tab
-            self.driver.execute_script("arguments[0].scrollIntoView(true);", menu_tab)
+            self.driver.execute_script(
+                "arguments[0].scrollIntoView(true);", menu_tab)
             menu_tab.click()
 
             # Define a dictionary to store menu data from all tabs
@@ -356,11 +368,13 @@ class RestaurantsSpider(scrapy.Spider):
 
             for tab_name, tab_selector in menu_tabs.items():
                 try:
-                    logger.info(f"Looking for {tab_name} tab using selector: {tab_selector}")
+                    logger.info(
+                        f"Looking for {tab_name} tab using selector: {tab_selector}")
 
                     # Wait for the tab link to appear
                     tab_link = WebDriverWait(self.driver, 10).until(
-                        EC.presence_of_element_located((By.CSS_SELECTOR, tab_selector))
+                        EC.presence_of_element_located(
+                            (By.CSS_SELECTOR, tab_selector))
                     )
 
                     # Log the href attribute of the tab
@@ -368,25 +382,28 @@ class RestaurantsSpider(scrapy.Spider):
                     logger.info(f"Navigating to {tab_name} tab: {tab_url}")
 
                     # Scroll to the tab link and click it
-                    self.driver.execute_script("arguments[0].scrollIntoView(true);", tab_link)
+                    self.driver.execute_script(
+                        "arguments[0].scrollIntoView(true);", tab_link)
                     tab_link.click()
-                    
+
                     logger.info(f"Clicked on {tab_name} tab.")
-                    
+
                     # delay to allow the page to load
                     time.sleep(2)
-                    
+
                     if tab_name == "Set_Menu":
                         # Wait for the Set Menu section to load
                         WebDriverWait(self.driver, 10).until(
-                            EC.presence_of_element_located((By.CLASS_NAME, "rstdtl-course-list"))
+                            EC.presence_of_element_located(
+                                (By.CLASS_NAME, "rstdtl-course-list"))
                         )
                     else:
                         # Wait for the menu section to load
                         WebDriverWait(self.driver, 10).until(
-                            EC.presence_of_element_located((By.CLASS_NAME, "rstdtl-menu-lst"))
+                            EC.presence_of_element_located(
+                                (By.CLASS_NAME, "rstdtl-menu-lst"))
                         )
-                        
+
                     # Call the appropriate method based on the tab
                     if tab_name == "Set_Menu":
                         print("Extracting Set Menu data...")
@@ -400,15 +417,16 @@ class RestaurantsSpider(scrapy.Spider):
                     else:
                         tab_menu_data = []
 
-                    logger.info(f"Extracted {len(tab_menu_data)} items from {tab_name} tab.")
+                    logger.info(
+                        f"Extracted {len(tab_menu_data)} items from {tab_name} tab.")
                     menu_data[tab_name] = tab_menu_data
 
                 except Exception as e:
-                    logger.warning(f"Failed to navigate to {tab_name} tab or extract data: {e}")
+                    logger.warning(
+                        f"Failed to navigate to {tab_name} tab or extract data: {e}")
                     menu_data[tab_name] = []
 
             return menu_data
-
         except Exception as e:
             logger.error(f"Failed to navigate to Menu tab: {e}")
             return {}
@@ -426,7 +444,8 @@ class RestaurantsSpider(scrapy.Spider):
                 "}).filter(item => item.image_src !== null);"
             )
 
-            logger.info(f"Extracted {len(food_menu_data)} food menu items with valid images.")
+            logger.info(
+                f"Extracted {len(food_menu_data)} food menu items with valid images.")
             return food_menu_data
 
         except Exception as e:
@@ -449,7 +468,8 @@ class RestaurantsSpider(scrapy.Spider):
                 "}).filter(item => item.image_src !== null);"
             )
 
-            logger.info(f"Extracted {len(set_menu_data)} set menu items with valid images.")
+            logger.info(
+                f"Extracted {len(set_menu_data)} set menu items with valid images.")
             return set_menu_data
 
         except Exception as e:
@@ -469,7 +489,8 @@ class RestaurantsSpider(scrapy.Spider):
                 "}).filter(item => item.image_src !== null);"
             )
 
-            logger.info(f"Extracted {len(drink_menu_data)} drink menu items with valid images.")
+            logger.info(
+                f"Extracted {len(drink_menu_data)} drink menu items with valid images.")
             return drink_menu_data
 
         except Exception as e:
@@ -489,7 +510,8 @@ class RestaurantsSpider(scrapy.Spider):
                 "}).filter(item => item.image_src !== null);"
             )
 
-            logger.info(f"Extracted {len(lunch_menu_data)} lunch menu items with valid images.")
+            logger.info(
+                f"Extracted {len(lunch_menu_data)} lunch menu items with valid images.")
             return lunch_menu_data
 
         except Exception as e:
@@ -500,7 +522,8 @@ class RestaurantsSpider(scrapy.Spider):
         try:
             # Wait for the restaurant information section to load
             WebDriverWait(self.driver, 15).until(
-                EC.presence_of_element_located((By.CLASS_NAME, 'rstinfo-table__table'))
+                EC.presence_of_element_located(
+                    (By.CLASS_NAME, 'rstinfo-table__table'))
             )
 
             # Extract all tables under the "Details", "Seats/facilities", "Menu", and "Feature - Related Information" sections
@@ -536,9 +559,11 @@ class RestaurantsSpider(scrapy.Spider):
                     feature_related_info = rows
 
             logger.info(f"Extracted {len(details)} details items.")
-            logger.info(f"Extracted {len(seats_facilities)} seats/facilities items.")
+            logger.info(
+                f"Extracted {len(seats_facilities)} seats/facilities items.")
             logger.info(f"Extracted {len(menu)} menu items.")
-            logger.info(f"Extracted {len(feature_related_info)} feature-related information items.")
+            logger.info(
+                f"Extracted {len(feature_related_info)} feature-related information items.")
 
             # Return all extracted data as a dictionary
             return {
@@ -561,7 +586,8 @@ class RestaurantsSpider(scrapy.Spider):
         try:
             # Wait for the Photos link in the navigation menu to appear
             photos_link = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, "li#rdnavi-photo a.mainnavi"))
+                EC.presence_of_element_located(
+                    (By.CSS_SELECTOR, "li#rdnavi-photo a.mainnavi"))
             )
 
             # Log the href attribute of the Photos link
@@ -569,7 +595,8 @@ class RestaurantsSpider(scrapy.Spider):
             logger.info(f"Navigating to Photos page: {photos_url}")
 
             # Click the Photos link
-            self.driver.execute_script("arguments[0].scrollIntoView(true);", photos_link)
+            self.driver.execute_script(
+                "arguments[0].scrollIntoView(true);", photos_link)
             photos_link.click()
 
             # Wait for the Photos page to load
@@ -578,14 +605,17 @@ class RestaurantsSpider(scrapy.Spider):
             )
 
             # Navigate to the Interior tab
-            interior_tab_link = self.driver.find_element(By.CSS_SELECTOR, "a[href*='/dtlphotolst/3/smp2/']")
+            interior_tab_link = self.driver.find_element(
+                By.CSS_SELECTOR, "a[href*='/dtlphotolst/3/smp2/']")
             interior_tab_url = interior_tab_link.get_attribute('href')
             logger.info(f"Navigating to Interior tab: {interior_tab_url}")
-            self.driver.execute_script("arguments[0].click();", interior_tab_link)
+            self.driver.execute_script(
+                "arguments[0].click();", interior_tab_link)
 
             # Wait for the Interior tab to load
             WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.CLASS_NAME, "rstdtl-thumb-list"))
+                EC.presence_of_element_located(
+                    (By.CLASS_NAME, "rstdtl-thumb-list"))
             )
 
             # Extract only the Interior Photos URLs
@@ -604,7 +634,8 @@ class RestaurantsSpider(scrapy.Spider):
                 """
             )
 
-            logger.info(f"Extracted {len(interior_photo_urls)} interior photo URLs.")
+            logger.info(
+                f"Extracted {len(interior_photo_urls)} interior photo URLs.")
             return interior_photo_urls
 
         except Exception as e:
