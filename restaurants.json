@@ -26,8 +26,8 @@
                 },
                 {
                     "range": "4.0 - 4.4",
-                    "percentage": 17,
-                    "people": 123
+                    "percentage": 18,
+                    "people": 124
                 },
                 {
                     "range": "3.5 - 3.9",
@@ -133,46 +133,10 @@
             ],
             "Food": [
                 {
-                    "description": "A delicious assortment of seasonal fish sashimi!\n*For 2 people, JPY 3000",
-                    "image_src": null,
-                    "price": "JPY 1,500",
-                    "title": "7 Assorted Seasonal Fish Sashimi (for 1 person)"
-                },
-                {
                     "description": "A delicious assorted sashimi platter made with seasonal ingredients.\n* For 3 people: JPY 6,900 / For 4 people: JPY 9,200",
                     "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/260538/150x150_square_3a5cb5f1b5b815c9d4e463f3355fde44.jpg",
                     "price": "JPY 4,600",
                     "title": "Special Assorted Sashimi Platter 10 Types (for 2 People)"
-                },
-                {
-                    "description": null,
-                    "image_src": null,
-                    "price": "JPY 1,500",
-                    "title": "A la carte Fresh Bluefin Tuna Akami"
-                },
-                {
-                    "description": null,
-                    "image_src": null,
-                    "price": "JPY 1,800",
-                    "title": "A la carte Chutoro"
-                },
-                {
-                    "description": null,
-                    "image_src": null,
-                    "price": "JPY 2,400",
-                    "title": "A la carte Sashimi O-toro"
-                },
-                {
-                    "description": null,
-                    "image_src": null,
-                    "price": "JPY 1,000",
-                    "title": "A la carte Salmon"
-                },
-                {
-                    "description": null,
-                    "image_src": null,
-                    "price": "JPY 1,000",
-                    "title": "A la carte Snapper"
                 },
                 {
                     "description": null,
@@ -224,51 +188,9 @@
                 },
                 {
                     "description": null,
-                    "image_src": null,
-                    "price": "JPY 1,000",
-                    "title": "Bluefin Tuna Otoro"
-                },
-                {
-                    "description": null,
-                    "image_src": null,
-                    "price": "JPY 400",
-                    "title": "Giant Squid"
-                },
-                {
-                    "description": null,
-                    "image_src": null,
-                    "price": "JPY 1,000",
-                    "title": "Botan Shrimp (1 piece)"
-                },
-                {
-                    "description": null,
-                    "image_src": null,
-                    "price": "JPY 500",
-                    "title": "Fresh Scallop"
-                },
-                {
-                    "description": null,
-                    "image_src": null,
-                    "price": "JPY 800",
-                    "title": "Salmon Roe"
-                },
-                {
-                    "description": null,
                     "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/150940/150x150_square_150940982.jpg",
                     "price": "JPY 300",
                     "title": "Sea Bream"
-                },
-                {
-                    "description": null,
-                    "image_src": null,
-                    "price": "JPY 400",
-                    "title": "Salmon"
-                },
-                {
-                    "description": "One whole eel for JPY 1500",
-                    "image_src": null,
-                    "price": "JPY 800",
-                    "title": "Conger Eel"
                 },
                 {
                     "description": null,
@@ -287,30 +209,6 @@
                     "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/150940/150x150_square_150940976.jpg",
                     "price": "JPY 1,200",
                     "title": "Fresh Sea Urchin (Japanese)"
-                },
-                {
-                    "description": null,
-                    "image_src": null,
-                    "price": "JPY 200",
-                    "title": "Egg"
-                },
-                {
-                    "description": "One piece of salmon, one piece of mackerel, one piece of shrimp, and one piece of KINKA roll.",
-                    "image_src": null,
-                    "price": "JPY 990",
-                    "title": "Aburi Sushi 4 Pieces"
-                },
-                {
-                    "description": "1 piece of Salmon, 1 piece of Mackerel, 1 piece of Shrimp, 1 piece of Kinka Roll, 1 piece of Beef, and 1 piece of Eel.",
-                    "image_src": null,
-                    "price": "JPY 1,590",
-                    "title": "Aburi Sushi 6 Pieces"
-                },
-                {
-                    "description": "2 pieces of Salmon, 2 pieces of Mackerel, 2 pieces of Shrimp, and 2 pieces of Kinka Roll",
-                    "image_src": null,
-                    "price": "JPY 1,890",
-                    "title": "Aburi Sushi 8 Pieces"
                 },
                 {
                     "description": "2 pieces of Salmon, 2 pieces of Mackerel, 2 pieces of Shrimp, 2 pieces of KINKA Roll, 2 pieces of Beef, and 2 pieces of Anago.",
@@ -451,12 +349,6 @@
                     "title": "Black Soybean Kinako Monaka Ice Cream"
                 },
                 {
-                    "description": null,
-                    "image_src": null,
-                    "price": "JPY 400",
-                    "title": "Ice Cream Assorted Varieties (Pistachio, Black Soybean Kinako, Vanilla)"
-                },
-                {
                     "description": "Add Topping Ice + JPY 200",
                     "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/175086/150x150_square_961ab8abcc5d865a377b3031b38e27bb.jpg",
                     "price": "JPY 600",
@@ -472,204 +364,6 @@
             "Drink": [
                 {
                     "description": null,
-                    "image_src": null,
-                    "price": "JPY 800",
-                    "title": "Ebisu Draft Beer"
-                },
-                {
-                    "description": null,
-                    "image_src": null,
-                    "price": "JPY 1,250",
-                    "title": "Ibaraki Prefecture Craft Beer Hitachino Nest White Ale 330cc"
-                },
-                {
-                    "description": null,
-                    "image_src": null,
-                    "price": "JPY 1,480",
-                    "title": "Ehime Prefecture Craft Beer UMENISHIKI Aromatic Ale 330cc"
-                },
-                {
-                    "description": "Hamada Brewery (Kagoshima)",
-                    "image_src": null,
-                    "price": "JPY 770",
-                    "title": "Akaitouba Umeshu"
-                },
-                {
-                    "description": "Hoshisya Gura (Kagoshima)",
-                    "image_src": null,
-                    "price": "JPY 770",
-                    "title": "Brown Sugar Umeshu"
-                },
-                {
-                    "description": "Glass: JPY 770\nBottle: JPY 3,300",
-                    "image_src": null,
-                    "price": "JPY 770",
-                    "title": "Neblina/White"
-                },
-                {
-                    "description": "Glass: JPY 770\nBottle: JPY 3,300",
-                    "image_src": null,
-                    "price": "JPY 770",
-                    "title": "Neblina/Red"
-                },
-                {
-                    "description": "Glass JPY 950\nBottle JPY 4,800",
-                    "image_src": null,
-                    "price": "JPY 950",
-                    "title": "Chlorasolera Brut Nature"
-                },
-                {
-                    "description": null,
-                    "image_src": null,
-                    "price": "JPY 800",
-                    "title": "Hinoki Scented Highball"
-                },
-                {
-                    "description": null,
-                    "image_src": null,
-                    "price": "JPY 830",
-                    "title": "Smoky Highball"
-                },
-                {
-                    "description": null,
-                    "image_src": null,
-                    "price": "JPY 720",
-                    "title": "Coke Highball"
-                },
-                {
-                    "description": null,
-                    "image_src": null,
-                    "price": "JPY 720",
-                    "title": "Ginger Highball"
-                },
-                {
-                    "description": null,
-                    "image_src": null,
-                    "price": "JPY 780",
-                    "title": "Sencha Beer"
-                },
-                {
-                    "description": null,
-                    "image_src": null,
-                    "price": "JPY 780",
-                    "title": "Shiso Beer"
-                },
-                {
-                    "description": null,
-                    "image_src": null,
-                    "price": "JPY 780",
-                    "title": "Shandy Gaff"
-                },
-                {
-                    "description": null,
-                    "image_src": null,
-                    "price": "JPY 770",
-                    "title": "Green Tea Highball"
-                },
-                {
-                    "description": null,
-                    "image_src": null,
-                    "price": "JPY 770",
-                    "title": "Oolong Highball"
-                },
-                {
-                    "description": null,
-                    "image_src": null,
-                    "price": "JPY 830",
-                    "title": "Lemon Sour"
-                },
-                {
-                    "description": null,
-                    "image_src": null,
-                    "price": "JPY 830",
-                    "title": "Grapefruit Sour"
-                },
-                {
-                    "description": "[Mixers] - Orange Juice, Oolong Tea, Grapefruit Juice, Coke, Ginger Ale",
-                    "image_src": null,
-                    "price": "JPY 720",
-                    "title": "Cassis"
-                },
-                {
-                    "description": null,
-                    "image_src": null,
-                    "price": "JPY 770",
-                    "title": "Yuzu Wine Spritzer"
-                },
-                {
-                    "description": null,
-                    "image_src": null,
-                    "price": "JPY 950",
-                    "title": "Bobby's Gin and Tonic"
-                },
-                {
-                    "description": null,
-                    "image_src": null,
-                    "price": "JPY 950",
-                    "title": "Fig and Citrus Japanese Sake Sangria"
-                },
-                {
-                    "description": "Available hot or iced.",
-                    "image_src": null,
-                    "price": "JPY 550",
-                    "title": "Lemonade"
-                },
-                {
-                    "description": "Available hot or iced.",
-                    "image_src": null,
-                    "price": "JPY 620",
-                    "title": "Maple Lemonade"
-                },
-                {
-                    "description": "Available hot or iced.",
-                    "image_src": null,
-                    "price": "JPY 620",
-                    "title": "Honey Lemonade"
-                },
-                {
-                    "description": "A refreshing blend of citrus and ginger ale!",
-                    "image_src": null,
-                    "price": "JPY 550",
-                    "title": "Green Apple Ginger"
-                },
-                {
-                    "description": "A non-alcoholic drink inspired by Pina Colada. Feel the tropical fruity vibes!",
-                    "image_src": null,
-                    "price": "JPY 500",
-                    "title": "Pina Colada"
-                },
-                {
-                    "description": null,
-                    "image_src": null,
-                    "price": "JPY 400",
-                    "title": "Cola"
-                },
-                {
-                    "description": null,
-                    "image_src": null,
-                    "price": "JPY 400",
-                    "title": "Ginger Ale"
-                },
-                {
-                    "description": null,
-                    "image_src": null,
-                    "price": "JPY 400",
-                    "title": "Oolong Tea"
-                },
-                {
-                    "description": null,
-                    "image_src": null,
-                    "price": "JPY 400",
-                    "title": "Orange Juice"
-                },
-                {
-                    "description": null,
-                    "image_src": null,
-                    "price": "JPY 400",
-                    "title": "Grapefruit Juice"
-                },
-                {
-                    "description": null,
                     "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/175085/150x150_square_b0d6b2a826a6690a96dcabe85ff97ba3.jpg",
                     "price": "JPY 600",
                     "title": "Rishouen Tea Shop Kyoto Premium Gyokuro"
@@ -679,24 +373,6 @@
                     "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/175085/150x150_square_e556893b7e90034e3e3d6d4eed9a988e.jpg",
                     "price": "JPY 550",
                     "title": "Rishouen Tea Shop Kyoto Premium Hojicha"
-                },
-                {
-                    "description": null,
-                    "image_src": null,
-                    "price": "JPY 320",
-                    "title": "Hot Coffee"
-                },
-                {
-                    "description": null,
-                    "image_src": null,
-                    "price": "JPY 390",
-                    "title": "Iced Coffee"
-                },
-                {
-                    "description": null,
-                    "image_src": null,
-                    "price": "JPY 350",
-                    "title": "Milk Tea"
                 }
             ],
             "Lunch": [
@@ -827,12 +503,6 @@
                     "title": "Aburi KINKA Roll with Sea Urchin, Crab, and Salmon"
                 },
                 {
-                    "description": "Omakase Nigiri Sushi with Seasonal Fish",
-                    "image_src": null,
-                    "price": "JPY 2,200",
-                    "title": "Omakase Sushi 6 Pieces Set Meal"
-                },
-                {
                     "description": "4 pieces of Omakase Nigiri Sushi with seasonal fish + 6 pieces of Aburi Sushi",
                     "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/195662/150x150_square_b9bfe89e9df5035137f48f51445bea0b.jpg",
                     "price": "JPY 2,490",
@@ -849,12 +519,6 @@
                     "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/150940/150x150_square_150940998.jpg",
                     "price": "JPY 1,100",
                     "title": "Set Meal of Braised Sea Bream Collar"
-                },
-                {
-                    "description": "Coffee (Iced or Hot)\nMilk Tea\nOolong Tea\nCoke\nGinger Ale\nOrange Juice\nGrapefruit Juice",
-                    "image_src": null,
-                    "price": null,
-                    "title": "Set Meal, Rice Bowl, Sushi with Drink for 200 yen"
                 },
                 {
                     "description": "Half portion for JPY 380",

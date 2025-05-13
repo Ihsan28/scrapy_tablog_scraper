@@ -405,7 +405,6 @@ class RestaurantsSpider(scrapy.Spider):
 
     def extract_food_menu(self):
         try:
-
             # Extract food menu items
             food_menu_data = self.driver.execute_script(
                 "return Array.from(document.querySelectorAll('.rstdtl-menu-lst__contents')).map(item => {"
@@ -414,10 +413,10 @@ class RestaurantsSpider(scrapy.Spider):
                 "    const description = item.querySelector('.rstdtl-menu-lst__ex')?.innerText.trim() || null;"
                 "    const image_src = item.querySelector('.rstdtl-menu-lst__img img')?.getAttribute('src') || null;"
                 "    return { title, price, description, image_src };"
-                "});"
+                "}).filter(item => item.image_src !== null);"
             )
 
-            logger.info(f"Extracted {len(food_menu_data)} food menu items.")
+            logger.info(f"Extracted {len(food_menu_data)} food menu items with valid images.")
             return food_menu_data
 
         except Exception as e:
@@ -426,8 +425,7 @@ class RestaurantsSpider(scrapy.Spider):
 
     def extract_set_menu(self):
         try:
-
-            # Extract menu data
+            # Extract set menu items
             set_menu_data = self.driver.execute_script(
                 "return Array.from(document.querySelectorAll('.rstdtl-course-list')).map(menu => {"
                 "    return {"
@@ -438,10 +436,10 @@ class RestaurantsSpider(scrapy.Spider):
                 "        image_src: menu.querySelector('.rstdtl-course-list__img-target img')?.getAttribute('src') || null,"
                 "        available_time: menu.querySelector('.rstdtl-course-list__course-rule dd')?.innerText.trim() || null"
                 "    };"
-                "});"
+                "}).filter(item => item.image_src !== null);"
             )
 
-            logger.info(f"Extracted {len(set_menu_data)} set menu items.")
+            logger.info(f"Extracted {len(set_menu_data)} set menu items with valid images.")
             return set_menu_data
 
         except Exception as e:
@@ -450,7 +448,6 @@ class RestaurantsSpider(scrapy.Spider):
 
     def extract_drink_menu(self):
         try:
-
             # Extract drink menu items
             drink_menu_data = self.driver.execute_script(
                 "return Array.from(document.querySelectorAll('.rstdtl-menu-lst__contents')).map(item => {"
@@ -459,10 +456,10 @@ class RestaurantsSpider(scrapy.Spider):
                 "    const description = item.querySelector('.rstdtl-menu-lst__ex')?.innerText.trim() || null;"
                 "    const image_src = item.querySelector('.rstdtl-menu-lst__img img')?.getAttribute('src') || null;"
                 "    return { title, price, description, image_src };"
-                "});"
+                "}).filter(item => item.image_src !== null);"
             )
 
-            logger.info(f"Extracted {len(drink_menu_data)} drink menu items.")
+            logger.info(f"Extracted {len(drink_menu_data)} drink menu items with valid images.")
             return drink_menu_data
 
         except Exception as e:
@@ -471,7 +468,6 @@ class RestaurantsSpider(scrapy.Spider):
 
     def extract_lunch_menu(self):
         try:
-
             # Extract lunch menu items
             lunch_menu_data = self.driver.execute_script(
                 "return Array.from(document.querySelectorAll('.rstdtl-menu-lst__contents')).map(item => {"
@@ -480,10 +476,10 @@ class RestaurantsSpider(scrapy.Spider):
                 "    const description = item.querySelector('.rstdtl-menu-lst__ex')?.innerText.trim() || null;"
                 "    const image_src = item.querySelector('.rstdtl-menu-lst__img img')?.getAttribute('src') || null;"
                 "    return { title, price, description, image_src };"
-                "});"
+                "}).filter(item => item.image_src !== null);"
             )
 
-            logger.info(f"Extracted {len(lunch_menu_data)} lunch menu items.")
+            logger.info(f"Extracted {len(lunch_menu_data)} lunch menu items with valid images.")
             return lunch_menu_data
 
         except Exception as e:
