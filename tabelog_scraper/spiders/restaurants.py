@@ -37,23 +37,22 @@ class RestaurantsSpider(scrapy.Spider):
 
     def parse(self, response):
         self.driver.get(response.url)
-        # time.sleep(3)
         try:
             # Wait for the modal to appear (up to 10 seconds)
-            WebDriverWait(self.driver, 10).until(
+            WebDriverWait(self.driver, 5).until(
                 EC.presence_of_element_located(
                     (By.CSS_SELECTOR, 'div.c-lang-switch__inner.js-lang-change-text-en'))
             )
 
             # Find and click the "Switch to English" button
-            switch_to_english_button = WebDriverWait(self.driver, 10).until(
+            switch_to_english_button = WebDriverWait(self.driver, 5).until(
                 EC.element_to_be_clickable(
                     (By.CSS_SELECTOR, 'a.c-btn.c-lang-switch__btn.js-inbound-link.js-analytics-lang-switch'))
             )
             switch_to_english_button.click()
 
             # Wait for the page to reload (adjust wait time depending on network speed)
-            WebDriverWait(self.driver, 10).until(
+            WebDriverWait(self.driver, 5).until(
                 EC.presence_of_element_located(
                     (By.CSS_SELECTOR, 'a.list-rst__rst-name-target'))
                 # Example element after reload
@@ -84,6 +83,132 @@ class RestaurantsSpider(scrapy.Spider):
                 'a.c-pagination__arrow--next::attr(href)').get()
             if next_page:
                 yield scrapy.Request(response.urljoin(next_page), callback=self.parse)
+
+    def parse_detail(self, response):
+        self.driver.get(response.url)
+        self.switch_to_english()
+        body = self.driver.page_source
+        response = HtmlResponse(
+            self.driver.current_url, body=body, encoding='utf-8', request=response.request)
+
+        headline, full_description = self.get_headline_description(response)
+
+        specialities = self.fetch_specialities_data()
+        
+        setmenu = self.navigate_to_menu()
+        
+        restaurant_information = self.parse_restaurant_information()
+        
+        interior_photos = self.navigate_and_get_interior_official_photos()
+
+        data = {
+            "editorial_overview": {
+                "headline": headline,
+                "description": full_description,
+            },
+            "review_rating": {},
+            "specialities": specialities,
+            "menu": setmenu,
+            "restaurant_information": restaurant_information,
+            "interior_photos": interior_photos,
+            'url': response.url
+        }
+
+        try:
+            # Identify the Ratings URL
+            ratings_url = response.css('a#rating::attr(href)').get()
+
+            if ratings_url:
+                # self.logger.info(f"Found Ratings URL: {ratings_url}")
+
+                # Navigate to the Ratings page using Selenium
+                self.driver.get(ratings_url)
+
+                # Wait for the Ratings page to load
+                WebDriverWait(self.driver, 3).until(EC.presence_of_element_located(
+                    # Ensure the ratings section has loaded
+                    (By.CSS_SELECTOR, 'div.ratings-contents')))
+
+                # Get the current page source for scraping
+                body = self.driver.page_source
+                ratings_response = HtmlResponse(self.driver.current_url, body=body, encoding='utf-8',
+                                                request=response.request)
+
+                # logger.info("Extracting average ratings...")
+
+                # Extract Average Ratings
+                average_ratings = {}
+
+                # Extract titles and scores for average ratings
+                rating_titles = ratings_response.css(
+                    'dl.ratings-contents__table dt.ratings-contents__table-txt::text').getall()
+                rating_scores = ratings_response.css(
+                    'dl.ratings-contents__table dd.ratings-contents__table-score::text').getall()
+
+                # logger.info(f"Found rating titles: {rating_titles}")
+                # logger.info(f"Found rating scores: {rating_scores}")
+
+                if not rating_titles or not rating_scores:
+                    logger.warning("Rating titles or scores are missing!")
+                else:
+                    # Combine titles and scores into a dictionary
+                    for title, score in zip(rating_titles, rating_scores):
+                        average_ratings[title.strip()] = float(score.strip())
+                    # logger.info(f"Extracted average ratings: {average_ratings}")
+
+                # Extract Rating Distribution
+                rating_distribution = []
+
+                # Find all distribution items
+                distribution_items = ratings_response.css('li.ratings-contents__item')
+
+                if not distribution_items:
+                    logger.warning("No distribution items found! Check the page structure.")
+                else:
+                    # Loop through each item and extract details
+                    for index, item in enumerate(distribution_items, start=1):
+                        try:
+                            # Get the range (e.g., "5.0", "4.5 - 4.9")
+                            rating_range = item.css(
+                                'b.c-rating-v2__val.c-rating-v2__val--strong.ratings-contents__item-score::text'
+                            ).get()
+                            rating_range = rating_range.strip() if rating_range else None
+
+                            # Extract percentage width (e.g., "7%") from inline style
+                            percentage_width = item.css(
+                                'span.ratings-contents__item-gauge::attr(style)'
+                            ).re_first(r'width:\s*(\d+)%')
+                            percentage_width = int(percentage_width) if percentage_width else 0
+
+                            # Get people count (number of individuals who gave this rating)
+                            people_count = item.css(
+                                'strong.ratings-contents__item-num-strong::text'
+                            ).get()
+                            people_count = int(people_count.strip()) if people_count else 0
+
+                            # Append the extracted data to the list
+                            if rating_range:
+                                rating_distribution.append({
+                                    "range": rating_range,
+                                    "percentage": percentage_width,
+                                    "people": people_count
+                                })
+                        except Exception as e:
+                            logger.error(f"Error extracting distribution item {index}: e")
+
+                # Add extracted data to review_rating
+                data["review_rating"] = {
+                    "average_ratings": average_ratings,
+                    "rating_distribution": rating_distribution
+                }
+
+                # Log the final structured data
+                # logger.info(f"Final extracted ratings data: {data['review_rating']}")
+        except Exception as e:
+            self.logger.error(f"Error navigating to Ratings page: e")
+
+        # Yield the final result
+        yield data
 
     def switch_to_english(self):
 
@@ -190,7 +315,7 @@ class RestaurantsSpider(scrapy.Spider):
             logger.error(f"Failed to retrieve 'Specialities' data: {e}")
             return []
         
-    def navigate_and_setmenu(self):
+    def navigate_to_menu(self):
         try:
             # Wait for the Menu tab to appear
             menu_tab = WebDriverWait(self.driver, 10).until(
@@ -287,6 +412,89 @@ class RestaurantsSpider(scrapy.Spider):
         except Exception as e:
             logger.error(f"Failed to navigate to Menu tab: {e}")
             return {}
+
+    def extract_food_menu(self):
+        try:
+            # Extract food menu items
+            food_menu_data = self.driver.execute_script(
+                "return Array.from(document.querySelectorAll('.rstdtl-menu-lst__contents')).map(item => {"
+                "    const title = item.querySelector('.rstdtl-menu-lst__menu-title')?.innerText.trim() || null;"
+                "    const price = item.querySelector('.rstdtl-menu-lst__price')?.innerText.trim() || null;"
+                "    const description = item.querySelector('.rstdtl-menu-lst__ex')?.innerText.trim() || null;"
+                "    const image_src = item.querySelector('.rstdtl-menu-lst__img img')?.getAttribute('src')?.replace('150x150_square_', '') || null;"
+                "    return { title, price, description, image_src };"
+                "}).filter(item => item.image_src !== null);"
+            )
+
+            logger.info(f"Extracted {len(food_menu_data)} food menu items with valid images.")
+            return food_menu_data
+
+        except Exception as e:
+            logger.error(f"Failed to extract food menu data: {e}")
+            return []
+
+    def extract_set_menu(self):
+        try:
+            # Extract set menu items
+            set_menu_data = self.driver.execute_script(
+                "return Array.from(document.querySelectorAll('.rstdtl-course-list')).map(menu => {"
+                "    return {"
+                "        title: menu.querySelector('.rstdtl-course-list__course-title-text')?.innerText.trim() || null,"
+                "        description: menu.querySelector('.rstdtl-course-list__desc')?.innerText.trim() || null,"
+                "        price: menu.querySelector('.rstdtl-course-list__price-num em')?.innerText.trim() || null,"
+                "        link: menu.querySelector('.rstdtl-course-list__target')?.getAttribute('href') || null,"
+                "        image_src: menu.querySelector('.rstdtl-course-list__img-target img')?.getAttribute('src')?.replace('200x200_square_', '') || null,"
+                "        available_time: menu.querySelector('.rstdtl-course-list__course-rule dd')?.innerText.trim() || null"
+                "    };"
+                "}).filter(item => item.image_src !== null);"
+            )
+
+            logger.info(f"Extracted {len(set_menu_data)} set menu items with valid images.")
+            return set_menu_data
+
+        except Exception as e:
+            logger.error(f"Failed to extract set menu data: {e}")
+            return []
+
+    def extract_drink_menu(self):
+        try:
+            # Extract drink menu items
+            drink_menu_data = self.driver.execute_script(
+                "return Array.from(document.querySelectorAll('.rstdtl-menu-lst__contents')).map(item => {"
+                "    const title = item.querySelector('.rstdtl-menu-lst__menu-title')?.innerText.trim() || null;"
+                "    const price = item.querySelector('.rstdtl-menu-lst__price')?.innerText.trim() || null;"
+                "    const description = item.querySelector('.rstdtl-menu-lst__ex')?.innerText.trim() || null;"
+                "    const image_src = item.querySelector('.rstdtl-menu-lst__img img')?.getAttribute('src')?.replace('150x150_square_', '') || null;"
+                "    return { title, price, description, image_src };"
+                "}).filter(item => item.image_src !== null);"
+            )
+
+            logger.info(f"Extracted {len(drink_menu_data)} drink menu items with valid images.")
+            return drink_menu_data
+
+        except Exception as e:
+            logger.error(f"Failed to extract drink menu data: {e}")
+            return []
+
+    def extract_lunch_menu(self):
+        try:
+            # Extract lunch menu items
+            lunch_menu_data = self.driver.execute_script(
+                "return Array.from(document.querySelectorAll('.rstdtl-menu-lst__contents')).map(item => {"
+                "    const title = item.querySelector('.rstdtl-menu-lst__menu-title')?.innerText.trim() || null;"
+                "    const price = item.querySelector('.rstdtl-menu-lst__price')?.innerText.trim() || null;"
+                "    const description = item.querySelector('.rstdtl-menu-lst__ex')?.innerText.trim() || null;"
+                "    const image_src = item.querySelector('.rstdtl-menu-lst__img img')?.getAttribute('src')?.replace('150x150_square_', '') || null;"
+                "    return { title, price, description, image_src };"
+                "}).filter(item => item.image_src !== null);"
+            )
+
+            logger.info(f"Extracted {len(lunch_menu_data)} lunch menu items with valid images.")
+            return lunch_menu_data
+
+        except Exception as e:
+            logger.error(f"Failed to extract lunch menu data: {e}")
+            return []
 
     def parse_restaurant_information(self):
         try:
@@ -402,215 +610,6 @@ class RestaurantsSpider(scrapy.Spider):
         except Exception as e:
             logger.error(f"Failed to navigate to Interior Photos page: {e}")
             return []
-
-    def extract_food_menu(self):
-        try:
-            # Extract food menu items
-            food_menu_data = self.driver.execute_script(
-                "return Array.from(document.querySelectorAll('.rstdtl-menu-lst__contents')).map(item => {"
-                "    const title = item.querySelector('.rstdtl-menu-lst__menu-title')?.innerText.trim() || null;"
-                "    const price = item.querySelector('.rstdtl-menu-lst__price')?.innerText.trim() || null;"
-                "    const description = item.querySelector('.rstdtl-menu-lst__ex')?.innerText.trim() || null;"
-                "    const image_src = item.querySelector('.rstdtl-menu-lst__img img')?.getAttribute('src') || null;"
-                "    return { title, price, description, image_src };"
-                "}).filter(item => item.image_src !== null);"
-            )
-
-            logger.info(f"Extracted {len(food_menu_data)} food menu items with valid images.")
-            return food_menu_data
-
-        except Exception as e:
-            logger.error(f"Failed to extract food menu data: {e}")
-            return []
-
-    def extract_set_menu(self):
-        try:
-            # Extract set menu items
-            set_menu_data = self.driver.execute_script(
-                "return Array.from(document.querySelectorAll('.rstdtl-course-list')).map(menu => {"
-                "    return {"
-                "        title: menu.querySelector('.rstdtl-course-list__course-title-text')?.innerText.trim() || null,"
-                "        description: menu.querySelector('.rstdtl-course-list__desc')?.innerText.trim() || null,"
-                "        price: menu.querySelector('.rstdtl-course-list__price-num em')?.innerText.trim() || null,"
-                "        link: menu.querySelector('.rstdtl-course-list__target')?.getAttribute('href') || null,"
-                "        image_src: menu.querySelector('.rstdtl-course-list__img-target img')?.getAttribute('src') || null,"
-                "        available_time: menu.querySelector('.rstdtl-course-list__course-rule dd')?.innerText.trim() || null"
-                "    };"
-                "}).filter(item => item.image_src !== null);"
-            )
-
-            logger.info(f"Extracted {len(set_menu_data)} set menu items with valid images.")
-            return set_menu_data
-
-        except Exception as e:
-            logger.error(f"Failed to extract set menu data: {e}")
-            return []
-
-    def extract_drink_menu(self):
-        try:
-            # Extract drink menu items
-            drink_menu_data = self.driver.execute_script(
-                "return Array.from(document.querySelectorAll('.rstdtl-menu-lst__contents')).map(item => {"
-                "    const title = item.querySelector('.rstdtl-menu-lst__menu-title')?.innerText.trim() || null;"
-                "    const price = item.querySelector('.rstdtl-menu-lst__price')?.innerText.trim() || null;"
-                "    const description = item.querySelector('.rstdtl-menu-lst__ex')?.innerText.trim() || null;"
-                "    const image_src = item.querySelector('.rstdtl-menu-lst__img img')?.getAttribute('src') || null;"
-                "    return { title, price, description, image_src };"
-                "}).filter(item => item.image_src !== null);"
-            )
-
-            logger.info(f"Extracted {len(drink_menu_data)} drink menu items with valid images.")
-            return drink_menu_data
-
-        except Exception as e:
-            logger.error(f"Failed to extract drink menu data: {e}")
-            return []
-
-    def extract_lunch_menu(self):
-        try:
-            # Extract lunch menu items
-            lunch_menu_data = self.driver.execute_script(
-                "return Array.from(document.querySelectorAll('.rstdtl-menu-lst__contents')).map(item => {"
-                "    const title = item.querySelector('.rstdtl-menu-lst__menu-title')?.innerText.trim() || null;"
-                "    const price = item.querySelector('.rstdtl-menu-lst__price')?.innerText.trim() || null;"
-                "    const description = item.querySelector('.rstdtl-menu-lst__ex')?.innerText.trim() || null;"
-                "    const image_src = item.querySelector('.rstdtl-menu-lst__img img')?.getAttribute('src') || null;"
-                "    return { title, price, description, image_src };"
-                "}).filter(item => item.image_src !== null);"
-            )
-
-            logger.info(f"Extracted {len(lunch_menu_data)} lunch menu items with valid images.")
-            return lunch_menu_data
-
-        except Exception as e:
-            logger.error(f"Failed to extract lunch menu data: {e}")
-            return []
-
-    def parse_detail(self, response):
-        self.driver.get(response.url)
-        self.switch_to_english()
-        body = self.driver.page_source
-        response = HtmlResponse(
-            self.driver.current_url, body=body, encoding='utf-8', request=response.request)
-
-        headline, full_description = self.get_headline_description(response)
-
-        specialities = self.fetch_specialities_data()
-        
-        setmenu = self.navigate_and_setmenu()
-        
-        restaurant_information = self.parse_restaurant_information()
-        
-        interior_photos = self.navigate_and_get_interior_official_photos()
-
-        data = {
-            "editorial_overview": {
-                "headline": headline,
-                "description": full_description,
-            },
-            "review_rating": {},
-            "specialities": specialities,
-            "menu": setmenu,
-            "restaurant_information": restaurant_information,
-            "interior_photos": interior_photos,
-            'url': response.url
-        }
-
-        try:
-            # Identify the Ratings URL
-            ratings_url = response.css('a#rating::attr(href)').get()
-
-            if ratings_url:
-                # self.logger.info(f"Found Ratings URL: {ratings_url}")
-
-                # Navigate to the Ratings page using Selenium
-                self.driver.get(ratings_url)
-
-                # Wait for the Ratings page to load
-                WebDriverWait(self.driver, 3).until(EC.presence_of_element_located(
-                    # Ensure the ratings section has loaded
-                    (By.CSS_SELECTOR, 'div.ratings-contents')))
-
-                # Get the current page source for scraping
-                body = self.driver.page_source
-                ratings_response = HtmlResponse(self.driver.current_url, body=body, encoding='utf-8',
-                                                request=response.request)
-
-                # logger.info("Extracting average ratings...")
-
-                # Extract Average Ratings
-                average_ratings = {}
-
-                # Extract titles and scores for average ratings
-                rating_titles = ratings_response.css(
-                    'dl.ratings-contents__table dt.ratings-contents__table-txt::text').getall()
-                rating_scores = ratings_response.css(
-                    'dl.ratings-contents__table dd.ratings-contents__table-score::text').getall()
-
-                # logger.info(f"Found rating titles: {rating_titles}")
-                # logger.info(f"Found rating scores: {rating_scores}")
-
-                if not rating_titles or not rating_scores:
-                    logger.warning("Rating titles or scores are missing!")
-                else:
-                    # Combine titles and scores into a dictionary
-                    for title, score in zip(rating_titles, rating_scores):
-                        average_ratings[title.strip()] = float(score.strip())
-                    # logger.info(f"Extracted average ratings: {average_ratings}")
-
-                # Extract Rating Distribution
-                rating_distribution = []
-
-                # Find all distribution items
-                distribution_items = ratings_response.css('li.ratings-contents__item')
-
-                if not distribution_items:
-                    logger.warning("No distribution items found! Check the page structure.")
-                else:
-                    # Loop through each item and extract details
-                    for index, item in enumerate(distribution_items, start=1):
-                        try:
-                            # Get the range (e.g., "5.0", "4.5 - 4.9")
-                            rating_range = item.css(
-                                'b.c-rating-v2__val.c-rating-v2__val--strong.ratings-contents__item-score::text'
-                            ).get()
-                            rating_range = rating_range.strip() if rating_range else None
-
-                            # Extract percentage width (e.g., "7%") from inline style
-                            percentage_width = item.css(
-                                'span.ratings-contents__item-gauge::attr(style)'
-                            ).re_first(r'width:\s*(\d+)%')
-                            percentage_width = int(percentage_width) if percentage_width else 0
-
-                            # Get people count (number of individuals who gave this rating)
-                            people_count = item.css(
-                                'strong.ratings-contents__item-num-strong::text'
-                            ).get()
-                            people_count = int(people_count.strip()) if people_count else 0
-
-                            # Append the extracted data to the list
-                            if rating_range:
-                                rating_distribution.append({
-                                    "range": rating_range,
-                                    "percentage": percentage_width,
-                                    "people": people_count
-                                })
-                        except Exception as e:
-                            logger.error(f"Error extracting distribution item {index}: e")
-
-                # Add extracted data to review_rating
-                data["review_rating"] = {
-                    "average_ratings": average_ratings,
-                    "rating_distribution": rating_distribution
-                }
-
-                # Log the final structured data
-                # logger.info(f"Final extracted ratings data: {data['review_rating']}")
-        except Exception as e:
-            self.logger.error(f"Error navigating to Ratings page: e")
-
-        # Yield the final result
-        yield data
 
     def closed(self, reason):
         self.driver.quit()
