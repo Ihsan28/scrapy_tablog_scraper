@@ -21,7 +21,7 @@ class RestaurantsSpider(scrapy.Spider):
     allowed_domains = ["tabelog.com"]
     start_urls = ['https://tabelog.com/en/rstLst/?utf8=%E2%9C%93&svd=&svt=1900&svps=2&vac_net=1&pcd=41']
 
-    def __init__(self, num_restaurants=4885, *args, **kwargs):
+    def __init__(self, num_restaurants=1, *args, **kwargs):
         super(RestaurantsSpider, self).__init__(*args, **kwargs)
         # Desired number of restaurant links
         self.num_restaurants = int(num_restaurants)
@@ -98,7 +98,7 @@ class RestaurantsSpider(scrapy.Spider):
             for link in batch_links:
                 if self.collected_links < self.num_restaurants:
                     self.collected_links += 1
-                    # yield scrapy.Request(link, callback=self.parse_detail)
+                    yield scrapy.Request(link, callback=self.parse_detail)
                 else:
                     break
 

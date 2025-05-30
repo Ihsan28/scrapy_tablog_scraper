@@ -1,0 +1,31 @@
+# Byte-compiled files
+*.pyc
+__pycache__/
+
+# Logs
+*.log
+
+# Scrapy cache
+.scrapy/
+
+# Output files (optional, if you don't want them in version control)
+*.json
+*.csv
+*.xml
+
+# Environment files
+.env
+
+# Virtual environment folder (if you're using one)
+.venv/
+env/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# PyCharm IDE files (if you're using PyCharm)
+.idea/
+
+# VSCode settings (if you're using Visual Studio Code)
+.vscode/

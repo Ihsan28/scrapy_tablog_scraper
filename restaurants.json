@@ -1,637 +1,192 @@
 [
     {
         "editorial_overview": {
-            "headline": "Enjoy a magical experience with us!",
-            "description": "Join us for a fun evening with magic and delicious food! We offer party sets for small groups and larger gatherings."
+            "headline": "Enjoy the pleasure of counter Tempura in Ureshino ◆ Enjoy Tempura fried in fresh \"Taihaku sesame oil\"",
+            "description": "We are a small restaurant that opened on November 1, 2016 with the concept of \"a space where people can connect with each other.\" Our Tempura is made with the passion of the farmers who provide us with fresh and delicious vegetables, and we try to make Tempura that makes the most of the goodness of seasonal ingredients at the time, such as letting some fish sit for a few days to mature the flavor. Please take your time and enjoy a wonderful time at our open counter."
         },
         "review_rating": {
             "average_ratings": {
-                "Overall": 3.6,
-                "Food and taste": 3.63,
-                "Service": 3.43,
-                "Atmosphere": 3.66,
-                "Drinks": 3.44,
-                "Cost performance": 3.45
+                "Overall": 3.96,
+                "Food and taste": 4.58,
+                "Service": 4.42,
+                "Atmosphere": 4.58,
+                "Drinks": 4.14,
+                "Cost performance": 4.36
             },
             "rating_distribution": [
                 {
                     "range": "5.0",
-                    "percentage": 5,
-                    "people": 34
+                    "percentage": 22,
+                    "people": 4
                 },
                 {
                     "range": "4.5 - 4.9",
-                    "percentage": 5,
-                    "people": 36
+                    "percentage": 17,
+                    "people": 3
                 },
                 {
                     "range": "4.0 - 4.4",
-                    "percentage": 18,
-                    "people": 124
+                    "percentage": 6,
+                    "people": 1
                 },
                 {
                     "range": "3.5 - 3.9",
-                    "percentage": 40,
-                    "people": 283
+                    "percentage": 28,
+                    "people": 5
                 },
                 {
                     "range": "3.0 - 3.4",
-                    "percentage": 26,
-                    "people": 180
+                    "percentage": 22,
+                    "people": 4
                 },
                 {
                     "range": "2.5 - 2.9",
-                    "percentage": 5,
-                    "people": 34
+                    "percentage": 6,
+                    "people": 1
                 },
                 {
                     "range": "2.0 - 2.4",
-                    "percentage": 1,
-                    "people": 7
+                    "percentage": 0,
+                    "people": 0
                 },
                 {
                     "range": "1.5 - 1.9",
                     "percentage": 0,
-                    "people": 2
+                    "people": 0
                 },
                 {
                     "range": "1.0 - 1.4",
-                    "percentage": 1,
-                    "people": 5
+                    "percentage": 0,
+                    "people": 0
                 }
             ]
         },
         "specialities": [
             {
-                "comment": "KINKA's aburi sushi includes nigiri, pressed sushi, and rolls. Our aburi pressed sushi features five varieties: shrimp, salmon, mackerel, eel, and beef. We drizzle our special KINKA sauce over the pressed sushi and torch it for a delightful finish. The aburi pressed sushi melts in your mouth, offering a new sensation that can be enjoyed by both Japanese and international guests alike.",
-                "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/71826/71826932.jpg",
+                "comment": "The frying oil is uniquely blended based on the highest quality \"white sesame oil,\" and we replace a portion of the oil with fresh oil regularly, allowing you to enjoy tempura fried in always fresh oil. *Depending on the course, we may change the oil multiple times within a single portion. Additionally, the vegetables and seafood we use are all carefully selected. We also pay close attention to the kombu and bonito flakes used in our broth, constantly experimenting to ensure our customers can say it’s delicious.",
+                "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/128807/128807555.jpg",
                 "label": "Food",
-                "title": "\"KINKA Specialty New Sensation Grilled Sushi - 6 Pieces\""
+                "title": "\"Carefully Crafted Fried Oil with a Unique Blend\""
             },
             {
-                "comment": "Kinka is a place where you can casually enjoy delicious food and drinks even if you're alone as a woman. It's perfect for dates and business meetings, but you can also drop by the counter for some tapas and a glass of wine in a relaxed manner. 【Ultimate Nigiri Sushi】 We use plenty of seasonal and fresh ingredients for our nigiri. Lobster, fatty tuna, A5 Wagyu beef, snow crab, sea urchin, salmon roe, fresh scallops... We sincerely look forward to your visit!",
-                "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/62698/62698123.jpg",
-                "label": "Space",
-                "title": "\"KINKA\" is Full of Casual Chic Vibes☆"
-            },
-            {
-                "comment": "Courses start from 4,000 yen and can accommodate up to 66 guests! Whether it's for welcome and farewell parties, girls' nights out, or dates, you can enjoy parties and banquets in a stylish space! You can also rent the place for a private feel, making it perfect for intimate gatherings!",
-                "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/117335/117335758.jpg",
-                "label": "Food",
-                "title": "A Rich Variety of Course Menus Available♪"
-            },
-            {
-                "comment": "KINKA's bartender has created a unique and stylish original cocktail with a \"Japanese\" twist♬ - Fig and Japanese citrus sake sangria - Yuzu morning - Kumazasa highball.",
-                "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/62338/62338349.jpg",
+                "comment": "We have a wide selection of local sake from Saga Prefecture to pair with your tempura. We offer delicious sake that changes with the seasons. Since it is not listed on the menu, please feel free to ask the owner. Of course, we also have a variety of classic sake (from Junmai to Daiginjo), so don't hesitate to let us know your preferences. Additionally, we have white wine curated by a sommelier, as well as rare whiskies like Hibiki and Yamazaki.",
+                "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/128807/128807603.jpg",
                 "label": "Drink",
-                "title": "KINKA Original \"Wa\" Cocktail"
+                "title": "\"Local Sake from Saga and Wines Curated by a Sommelier Available\""
+            },
+            {
+                "comment": "The stylish interior exudes a sense of luxury, creating an atmosphere reminiscent of a hidden retreat. Inside, there is a high-quality ginkgo counter that conveys the warmth of wood, where each piece of tempura is carefully prepared and served right in front of the customers. Enjoy the unique experience that only a counter setting can offer.",
+                "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/98214/98214727.jpg",
+                "label": "Space",
+                "title": "\"An Elegant Interior with a Spacious Counter\""
             }
         ],
         "menu": {
             "Set_Menu": [
                 {
-                    "available_time": "2 ~ 8",
-                    "description": "Introducing the 'KIWAMI' course featuring 10 dishes, including KINKA's famous Aburi Sushi, seasonal Omakase sushi, and recommended signature dishes. This course is perfect for various dining occasions, such as business dinners, casual get-togethers, dates, and girls' parties.",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/221897/436aadf06026cf476d1527771666307e.jpg",
-                    "link": "https://tabelog.com/en/tokyo/A1303/A130301/13199924/party/230361742/",
-                    "price": "6,600",
-                    "title": "\"KIWAMI\" Course: 5 Seasonal Omakase Sushi, 4 Signature Aburi Sushi, and 10 Dishes JPY 6,600"
-                },
-                {
-                    "available_time": "2 ~ 8",
-                    "description": "Introducing the 'SATORI' Course featuring 11 exquisite dishes including KINKA's signature aburi sushi, special nigiri, and lobster dishes. This course is perfect for special dining occasions, parties, anniversaries, or romantic dates.",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/221897/0bcc6598138216725145e097e212d3cf.jpg",
-                    "link": "https://tabelog.com/en/tokyo/A1303/A130301/13199924/party/230361751/",
-                    "price": "9,900",
-                    "title": "\"SATORI\" Course: 5 Pieces of Special Nigiri, 4 Pieces of Signature Aburi Sushi, and 11 Dishes JPY 9,900"
-                },
-                {
-                    "available_time": "2 ~ 8",
-                    "description": "[Lunch] Enjoy our recommended \"HANA\" course, featuring seven dishes including our signature Mosaic Sushi. This course is perfect for lunch meetings, girls' parties, anniversaries, and dates. Experience the flavors of KINKA!",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/187064/9d85a2909c880a04f0ae159dac5fbb18.jpg",
-                    "link": "https://tabelog.com/en/tokyo/A1303/A130301/13199924/party/230361756/",
-                    "price": "3,300",
-                    "title": "Lunch [\"HANA\" Course] 16 Pieces of Signature Mosaic Sushi & 7 Dishes of Carefully Selected Japanese Cuisine JPY 3,300"
-                },
-                {
-                    "available_time": "2 ~ 8",
-                    "description": "【Lunch】Introducing our 'Kiwami' course featuring a total of 10 exquisite dishes including KINKA's signature Aburi sushi, seasonal Omakase sushi, and recommended special dishes. This course is ideal for various dining occasions such as business meals, parties, dates, and girls' nights out.",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/221897/436aadf06026cf476d1527771666307e.jpg",
-                    "link": "https://tabelog.com/en/tokyo/A1303/A130301/13199924/party/230361771/",
-                    "price": "6,600",
-                    "title": "Lunch [\"KIWAMI\" Course] 5 Seasonal Omakase Sushi, 4 Signature Aburi Sushi, and 10 Dishes JPY 6,600"
+                    "available_time": null,
+                    "description": null,
+                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/98214/98214727.jpg",
+                    "link": "https://tabelog.com/en/saga/A4104/A410401/41006451/party/84245454/",
+                    "price": "11,000",
+                    "title": "[Evening Session/Web Exclusive] Chef's Omakase Course ◆ Enjoy the chef's special dishes such as 'Tempura' and 'Tencha'"
                 },
                 {
                     "available_time": null,
-                    "description": "For our birthday and anniversary guests: This is a special plan for reserving seats along with a commemorative plate. It is recommended for customers who wish to celebrate their special occasions while enjoying a la carte dishes. We offer an assorted dessert platter with a message plate for JPY 1,000. Please note that the photo is for illustration purposes.",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/179445/469c8232c1ad902839a0a11cc59dd622.jpg",
-                    "link": "https://tabelog.com/en/tokyo/A1303/A130301/13199924/party/200160148/",
-                    "price": "1,000",
-                    "title": "[Reservation Only] A La Carte Order + Anniversary Plate with Message Reservation"
+                    "description": "For celebrations and entertaining important guests, For those who wish to enjoy more luxurious tempura, Add-On / Pork Shabu-Shabu @ JPY 2500 (available from two servings) * For single servings, we can accommodate one person. * Pork Shabu-Shabu requires a reservation.",
+                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/98214/98214727.jpg",
+                    "link": "https://tabelog.com/en/saga/A4104/A410401/41006451/party/79687343/",
+                    "price": "13,200",
+                    "title": "[Evening] Kusunoki / Kusu ◆ A course perfect for celebrations or entertaining important guests, where you can enjoy more luxurious \"Tempura\"."
+                },
+                {
+                    "available_time": null,
+                    "description": "If you're not sure, this is the one! Our standard and most popular course at Tempura Fukuda. For those concerned about portion sizes with the option of adding Tan Shabu, we also offer a 'quality over quantity' option. *Please contact us in advance. Add-On / Tan Shabu: JPY 2,500 (for two or more people) *For one person, a single portion can be accommodated. *Tan Shabu requires a reservation.",
+                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/98214/98214727.jpg",
+                    "link": "https://tabelog.com/en/saga/A4104/A410401/41006451/party/161657434/",
+                    "price": "8,800",
+                    "title": "[Evening] Fuji / F uji ◆ If you're unsure, this is the one! The standard and most popular course to enjoy 'Tempura' and 'Tempura Rice' among others."
+                },
+                {
+                    "available_time": null,
+                    "description": "Note: Reservations are accepted only from one month to three days in advance until 16:00. Perfect for celebrations or business meetings with your important guests. For those who wish to enjoy a more luxurious tempura experience, each dish is served freshly fried at the optimal temperature and batter condition for each ingredient.",
+                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/98214/98214727.jpg",
+                    "link": "https://tabelog.com/en/saga/A4104/A410401/41006451/party/254401530/",
+                    "price": "11,000",
+                    "title": "[Lunch] Kusunoki Set Meal ◆ A set meal perfect for celebrations or business meetings with important people, featuring a more luxurious \"Counter Tempura\"."
+                },
+                {
+                    "available_time": null,
+                    "description": "Note: Reservations are accepted from one month in advance up to 12:00 PM the day before. This set meal allows you to enjoy freshly prepared tempura dishes from the counter at Tempura Fukuda, available exclusively for lunch at a great price.",
+                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/98214/98214727.jpg",
+                    "link": "https://tabelog.com/en/saga/A4104/A410401/41006451/party/254401529/",
+                    "price": "5,500",
+                    "title": "[Lunch] Fuji Set Meal ◆ A great value and standard lunch set where you can enjoy freshly fried counter tempura, just like in the evening."
                 }
             ],
-            "Food": [
-                {
-                    "description": "A delicious assorted sashimi platter made with seasonal ingredients.\n* For 3 people: JPY 6,900 / For 4 people: JPY 9,200",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/260538/3a5cb5f1b5b815c9d4e463f3355fde44.jpg",
-                    "price": "JPY 4,600",
-                    "title": "Special Assorted Sashimi Platter 10 Types (for 2 People)"
-                },
-                {
-                    "description": null,
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/260538/8fb25a6682e0ca851cdd6f81a8bcfdcb.jpg",
-                    "price": "JPY 2,200",
-                    "title": "Omakase Nigiri Sushi 6 Pieces"
-                },
-                {
-                    "description": null,
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/260538/aa9f99b8614bb044fa816d38f54f8174.jpg",
-                    "price": "JPY 4,000",
-                    "title": "Omakase Nigiri Sushi 9 Pieces"
-                },
-                {
-                    "description": "Delicious omakase nigiri sushi made with seasonal ingredients",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/260538/9779c828e407782731e1064eca558f29.jpg",
-                    "price": "JPY 6,200",
-                    "title": "Omakase Nigiri Sushi 12 Pieces"
-                },
-                {
-                    "description": null,
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/260538/1719c971555dd55409567215323892ea.jpg",
-                    "price": "JPY 2,200",
-                    "title": "Aburi Omakase Nigiri Sushi 6 Pieces"
-                },
-                {
-                    "description": "A dream combo of seasonal nigiri sushi and our special sauce seared sushi.",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/260538/748a55cc003d09905532044f9885a78e.jpg",
-                    "price": "JPY 3,650",
-                    "title": "KINKA's Ultimate Omakase 12 Pieces"
-                },
-                {
-                    "description": "Indulge in luxurious sushi featuring black wagyu, uni, and toro, lightly seared with a special sauce. It's sushi taken to the next level!",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/260538/dffd960cdea6b22c17db803b7634a6a2.jpg",
-                    "price": "JPY 5,500",
-                    "title": "KINKA Ultimate Omakase 12 Pieces"
-                },
-                {
-                    "description": null,
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/150940/150940946.jpg",
-                    "price": "JPY 500",
-                    "title": "Bluefin Tuna Red Meat"
-                },
-                {
-                    "description": null,
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/150940/150940940.jpg",
-                    "price": "JPY 800",
-                    "title": "Bluefin Tuna Chutoro"
-                },
-                {
-                    "description": null,
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/150940/150940982.jpg",
-                    "price": "JPY 300",
-                    "title": "Sea Bream"
-                },
-                {
-                    "description": null,
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/150940/150940954.jpg",
-                    "price": "JPY 1,000",
-                    "title": "Kuroge Wagyu (Ibaraki Purple Peak Beef)"
-                },
-                {
-                    "description": null,
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/187064/b50a0a37ec5ffbd803576534464f7d41.jpg",
-                    "price": "JPY 1,200",
-                    "title": "Wagyu Sea Urchin (Ibaraki Purple Peak Beef)"
-                },
-                {
-                    "description": null,
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/150940/150940976.jpg",
-                    "price": "JPY 1,200",
-                    "title": "Fresh Sea Urchin (Japanese)"
-                },
-                {
-                    "description": "2 pieces of Salmon, 2 pieces of Mackerel, 2 pieces of Shrimp, 2 pieces of KINKA Roll, 2 pieces of Beef, and 2 pieces of Anago.",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/187064/f67b02a6085ae68b348ab574d3b11ad9.jpg",
-                    "price": "JPY 2,790",
-                    "title": "Aburi Sushi 12 Pieces"
-                },
-                {
-                    "description": "Sushi in a whole new world with our homemade aioli sauce!!\n2 pieces / JPY 430\n6 pieces / JPY 1,290",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/260538/e17c56cffba35f8356f941bd762f55cd.jpg",
-                    "price": null,
-                    "title": "Salmon with Aioli Sauce"
-                },
-                {
-                    "description": "Enjoy a Western twist with our homemade basil sauce!\n2 pieces / JPY 430\n6 pieces / JPY 1290",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/260538/2ce05efef51dbed7b4349afaf0d5d2bc.jpg",
-                    "price": null,
-                    "title": "Shrimp with Basil Sauce"
-                },
-                {
-                    "description": "Addictive!! Garlic Miso Sauce\n2 pieces / JPY 430\n6 pieces / JPY 1,290",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/260538/676719d84856e8a11e26bc0be9ea9454.jpg",
-                    "price": null,
-                    "title": "Marinated Mackerel with Saikyo Miso"
-                },
-                {
-                    "description": "Try our buzz-worthy Roast Beef!\n2 pieces / JPY 500\n6 pieces / JPY 1390",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/260538/8b0aa07ea1c83f58c8da69557931acf7.jpg",
-                    "price": null,
-                    "title": "Angus Beef with Sesame Oil"
-                },
-                {
-                    "description": "An eye for an eye, a claw for an eel.\n2 pieces / JPY 500\n6 pieces / JPY 1,390",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/260538/4ed78f5e3f967959eddb1771fc3fd6ca.jpg",
-                    "price": null,
-                    "title": "Conger Eel with Sweet Sauce"
-                },
-                {
-                    "description": "Packed with bursting flavors, these are a delightful treat! ♡\n2 pieces / JPY 730\n6 pieces / JPY 2,190",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/260538/56dd6b8ea2c5c0c179ab80e8dcbaff39.jpg",
-                    "price": null,
-                    "title": "KINKA Roll"
-                },
-                {
-                    "description": "Packed with the rich flavors and sweetness of fresh fish!",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/260538/e8986ed2da679eeede9d455522b7dcc3.jpg",
-                    "price": "JPY 400",
-                    "title": "Sushi Shop's Fish Soup"
-                },
-                {
-                    "description": "We've extracted the maximum flavor from the sweet lobster broth!",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/260538/becf178a5c8a7a0a6ffa85e8b78b6926.jpg",
-                    "price": "JPY 700",
-                    "title": "Lobster Soup"
-                },
-                {
-                    "description": "The harmony of beef and sea urchin that melts in your mouth.",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/187064/d89d857da465d63b6a4ce0b98ea7e41a.jpg",
-                    "price": "JPY 1,200",
-                    "title": "Wagyu Beef and Sea Urchin (Bite-sized)"
-                },
-                {
-                    "description": "A dish that's perfect to enjoy with rice!",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/260538/91b7df34a04199e884790945a028b0a3.jpg",
-                    "price": "JPY 700",
-                    "title": "Grilled Mentaiko"
-                },
-                {
-                    "description": "Fancy up your edamame!",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/260538/d268c3ed2ec89304897a7930fa3e2c03.jpg",
-                    "price": "JPY 550",
-                    "title": "Edamame Hojicha Zuke"
-                },
-                {
-                    "description": "Every single day, we roll and roll, and it's so fluffy!",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/187064/bb032ce746a77251f3531520dea86f36.jpg",
-                    "price": "JPY 650",
-                    "title": "Original Dashimaki Tamago"
-                },
-                {
-                    "description": "A delicious treat marinated in rich soy sauce.",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/260538/3e354566786b76891ea592d564cbf78d.jpg",
-                    "price": "JPY 550",
-                    "title": "Cream Cheese Soy Sauce Marinade"
-                },
-                {
-                    "description": "Tossed with a generous serving of dressing made from fresh vegetables. Thank you, Earth!",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/239280/7b3883780799d0c885e6e1008ead3265.jpg",
-                    "price": "JPY 1,200",
-                    "title": "Homemade Roast Beef and Sushi Restaurant's Gari Dressing Salad"
-                },
-                {
-                    "description": "Born in Hokkaido. The playful ones are mostly tobiko (fish roe). Mixed with miso dressing.",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/187064/c2efa0ac3d7679d8f2719d9b5aa733c9.jpg",
-                    "price": "JPY 1,200",
-                    "title": "Grilled Salmon and Tobiko Chanchan Salad"
-                },
-                {
-                    "description": "Our top seller! Can you believe this is from a sushi shop?",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/213214/e4d83c708fef8a59e971c20a62896e4c.jpg",
-                    "price": "JPY 750",
-                    "title": "Sushi Shop Kara-age"
-                },
-                {
-                    "description": "Dive into the deliciousness of our tomato sauce! ♡",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/187064/ce4f445cab721e05c4ddc910b1389e01.jpg",
-                    "price": "JPY 900",
-                    "title": "Crab Cream Croquette with Tomato Sauce 2p"
-                },
-                {
-                    "description": "Always a classic and absolutely delicious!",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/260538/17558901e45932e48095da2374635744.jpg",
-                    "price": "JPY 650",
-                    "title": "Today's Chawanmushi"
-                },
-                {
-                    "description": "Squid tempura + Tosa vinegar sauce = pure perfection!!",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/213214/0eabc2f42b4ad651656cf2d0b1d54895.jpg",
-                    "price": "JPY 850",
-                    "title": "Squid Tempura with Tosa Vinegar Sauce"
-                },
-                {
-                    "description": "Slowly simmered beef tendon until tender!\nPerfect for udon noodles!",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/239281/f98aa6c2bd21520c196f4d939e535219.jpg",
-                    "price": "JPY 1,200",
-                    "title": "Original Dashi Yakisoba"
-                },
-                {
-                    "description": "Original Sweet Stick + Drink Set + JPY 100",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/260538/059e6240d8fc5d757fbb4bd9a1cd5fb5.jpg",
-                    "price": "JPY 800",
-                    "title": "Original Sweet Stick"
-                },
-                {
-                    "description": "Monaka with Black Soybean Kinako Ice Cream and Warabi Mochi",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/116621/116621862.jpg",
-                    "price": "JPY 600",
-                    "title": "Black Soybean Kinako Monaka Ice Cream"
-                },
-                {
-                    "description": "Add Topping Ice + JPY 200",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/175086/961ab8abcc5d865a377b3031b38e27bb.jpg",
-                    "price": "JPY 600",
-                    "title": "Rishouen Tea Shop Uji Hojicha Homemade Brulee"
-                },
-                {
-                    "description": "Add Topping Ice + JPY 200",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/175088/043fde8d1911ec4613521df77c4e80c4.jpg",
-                    "price": "JPY 600",
-                    "title": "Rishouen Tea Shop Uji Matcha Cheesecake"
-                }
-            ],
-            "Drink": [
-                {
-                    "description": null,
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/175085/b0d6b2a826a6690a96dcabe85ff97ba3.jpg",
-                    "price": "JPY 600",
-                    "title": "Rishouen Tea Shop Kyoto Premium Gyokuro"
-                },
-                {
-                    "description": null,
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/175085/e556893b7e90034e3e3d6d4eed9a988e.jpg",
-                    "price": "JPY 550",
-                    "title": "Rishouen Tea Shop Kyoto Premium Hojicha"
-                }
-            ],
-            "Lunch": [
-                {
-                    "description": "A luxurious rice bowl topped with fresh tai (sea bream) sashimi from Uwajima, Ehime, served with soy sauce and dashi.\nAdd extra rice for just JPY 100!",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/195662/2d0e8f2fa4aa5b923566c8ad3dba244b.jpg",
-                    "price": "JPY 1,190",
-                    "title": "Shari DE Uwajima Tai Meshi"
-                },
-                {
-                    "description": "Large size rice for an additional JPY 100.",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/195662/d27baf982196cdbcc5daec032b08f904.jpg",
-                    "price": "JPY 1,290",
-                    "title": "Salmon Rice Bowl"
-                },
-                {
-                    "description": "Large size rice for an additional JPY 100.",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/195662/f70965af0800c074ae30dd8475fe2270.jpg",
-                    "price": "JPY 1,490",
-                    "title": "Salmon and Ikura Rice Bowl"
-                },
-                {
-                    "description": "Large size rice for an additional JPY 100.",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/195662/b7fc9b036eda5d54210fae7cec378350.jpg",
-                    "price": "JPY 1,490",
-                    "title": "Luxurious Seafood Chirashi Rice Bowl"
-                },
-                {
-                    "description": "Large size rice for an additional JPY 100.",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/195662/dad12664e913363569a555b01f420f5d.jpg",
-                    "price": "JPY 2,390",
-                    "title": "Bluefin Tuna Akami Rice Bowl"
-                },
-                {
-                    "description": "Large size rice for an additional JPY 100.",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/195662/48a672775394771152f3b1b990d80037.jpg",
-                    "price": "JPY 2,990",
-                    "title": "2-Color Rice Bowl with Bluefin Tuna Lean and Fat"
-                },
-                {
-                    "description": "Large size rice for an additional JPY 100.",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/195662/183a092b09a402bcd852d9654d106ab9.jpg",
-                    "price": "JPY 3,590",
-                    "title": "Bluefin Tuna Chutoro Rice Bowl"
-                },
-                {
-                    "description": "Large size rice for an additional JPY 100.",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/195662/203d74eae55a92ca38078d3189e1e06f.jpg",
-                    "price": "JPY 1,590",
-                    "title": "Roast Beef Rice Bowl"
-                },
-                {
-                    "description": "Large size rice for an additional JPY 100.",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/195662/35ebc4053327756d0710311a80c2399c.jpg",
-                    "price": "JPY 1,790",
-                    "title": "Roast Beef Rice Bowl with Onsen Tamago"
-                },
-                {
-                    "description": "Large size rice for an additional JPY 100.",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/195662/445a4b8c852b8f61e1a83e58b97a5707.jpg",
-                    "price": "JPY 1,990",
-                    "title": "Roast Beef Rice Bowl with Smoked Daikon and Cream Cheese"
-                },
-                {
-                    "description": "Large size rice for an additional JPY 100.",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/195662/0dd922f144d33e3a905e18c7aaf2ec07.jpg",
-                    "price": "JPY 2,890",
-                    "title": "Roast Beef Rice Bowl with Sea Urchin and Salmon Roe"
-                },
-                {
-                    "description": "Aburi Pressed Sushi: 1 piece of Mackerel, 1 piece of Shrimp, 1 piece of Salmon, and 1 piece of Kinka Roll",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/195662/b6bb3e4f6b4b6713ee2b5eac8a94b5ad.jpg",
-                    "price": "JPY 890",
-                    "title": "Aburi Sushi 4 Pieces Set Meal"
-                },
-                {
-                    "description": "Aburi Sushi: 1 piece of salmon, 1 piece of mackerel, 1 piece of shrimp, 1 piece of Kinka roll, 1 piece of beef, and 1 piece of eel.",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/195662/48e477fd765e73acfcf4a643c6c241aa.jpg",
-                    "price": "JPY 1,590",
-                    "title": "Aburi Sushi 6 Pieces Set Meal"
-                },
-                {
-                    "description": "Aburi Oshi Sushi: 2 pieces of mackerel, 2 pieces of shrimp, 2 pieces of salmon, and 2 pieces of KINKA Roll.",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/195662/86a76fc80aea045d6b9c00c12bd1c1f3.jpg",
-                    "price": "JPY 1,790",
-                    "title": "Aburi Sushi 8 Pieces Set Meal"
-                },
-                {
-                    "description": "Aburi Sushi: 2 pieces each of Salmon, Mackerel, Shrimp, Kinka Roll, Beef, and Eel.",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/195662/42b27d5beba3bd9d019011c0e74943e6.jpg",
-                    "price": "JPY 2,790",
-                    "title": "Aburi Sushi 12 Pieces Set Meal"
-                },
-                {
-                    "description": "2 pieces / JPY 430\n\n6 pieces / JPY 1290",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/260538/e17c56cffba35f8356f941bd762f55cd.jpg",
-                    "price": null,
-                    "title": "Seared Salmon and Aioli Sauce Pressed Sushi"
-                },
-                {
-                    "description": "2 pieces / JPY 430\n\n6 pieces / JPY 1290",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/260538/2ce05efef51dbed7b4349afaf0d5d2bc.jpg",
-                    "price": null,
-                    "title": "Grilled Shrimp and Basil Sauce Pressed Sushi"
-                },
-                {
-                    "description": "2 pieces / JPY 430\n\n6 pieces / JPY 1290",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/260538/676719d84856e8a11e26bc0be9ea9454.jpg",
-                    "price": null,
-                    "title": "Seared Pressed Sushi with Mackerel and Saikyo Miso"
-                },
-                {
-                    "description": "2 pieces / JPY 500\n\n6 pieces / JPY 1,390",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/260538/8b0aa07ea1c83f58c8da69557931acf7.jpg",
-                    "price": null,
-                    "title": "Beef and Sesame Oil Aburi Pressed Sushi"
-                },
-                {
-                    "description": "2 pieces / JPY 500\n\n6 pieces / JPY 1,390",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/260538/4ed78f5e3f967959eddb1771fc3fd6ca.jpg",
-                    "price": null,
-                    "title": "Grilled Anago and Sweet Sauce Pressed Sushi"
-                },
-                {
-                    "description": "2 pieces / JPY 730\n\n6 pieces / JPY 2,190",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/260538/56dd6b8ea2c5c0c179ab80e8dcbaff39.jpg",
-                    "price": null,
-                    "title": "Aburi KINKA Roll with Sea Urchin, Crab, and Salmon"
-                },
-                {
-                    "description": "4 pieces of Omakase Nigiri Sushi with seasonal fish + 6 pieces of Aburi Sushi",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/195662/b9bfe89e9df5035137f48f51445bea0b.jpg",
-                    "price": "JPY 2,490",
-                    "title": "Aburi Omakase Sushi 10 Pieces Set Meal"
-                },
-                {
-                    "description": "Two pieces of mackerel for JPY 1,300",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/150940/150940997.jpg",
-                    "price": "JPY 1,000",
-                    "title": "Grilled Fatty Mackerel Set Meal (1 Piece of Mackerel)"
-                },
-                {
-                    "description": null,
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/150940/150940998.jpg",
-                    "price": "JPY 1,100",
-                    "title": "Set Meal of Braised Sea Bream Collar"
-                },
-                {
-                    "description": "Half portion for JPY 380",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/213214/e4d83c708fef8a59e971c20a62896e4c.jpg",
-                    "price": "JPY 750",
-                    "title": "Sushi Bar Fried Chicken"
-                },
-                {
-                    "description": "Half portion for JPY 450",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/213214/0eabc2f42b4ad651656cf2d0b1d54895.jpg",
-                    "price": "JPY 850",
-                    "title": "Tempura Squid with Tosa Vinegar Sauce"
-                },
-                {
-                    "description": "JPY 450 each",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/187064/6387932d6a04572e84fc8072aa0cf0a1.jpg",
-                    "price": "JPY 900",
-                    "title": "Crab Cream Croquette (2PC)"
-                },
-                {
-                    "description": null,
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/260538/3e354566786b76891ea592d564cbf78d.jpg",
-                    "price": "JPY 550",
-                    "title": "Cream Cheese Soy Sauce Pickle"
-                },
-                {
-                    "description": null,
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/187064/bb032ce746a77251f3531520dea86f36.jpg",
-                    "price": "JPY 650",
-                    "title": "Dashi-Maki Tamago"
-                },
-                {
-                    "description": null,
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/260538/91b7df34a04199e884790945a028b0a3.jpg",
-                    "price": "JPY 700",
-                    "title": "Grilled Mentaiko"
-                },
-                {
-                    "description": null,
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/261114/d89d857da465d63b6a4ce0b98ea7e41a.jpg",
-                    "price": "JPY 1,200",
-                    "title": "Wagyu Beef and Sea Urchin (Bite-sized)"
-                },
-                {
-                    "description": null,
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/260538/17558901e45932e48095da2374635744.jpg",
-                    "price": "JPY 650",
-                    "title": "Today's Chawanmushi"
-                },
-                {
-                    "description": "Half portion JPY 650",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/187064/c2efa0ac3d7679d8f2719d9b5aa733c9.jpg",
-                    "price": "JPY 1,200",
-                    "title": "Grilled Salmon and Tobiko Chan Chan Salad"
-                },
-                {
-                    "description": "Half portion JPY 650",
-                    "image_src": "https://tblg.k-img.com/restaurant/images/Rvw/239280/7b3883780799d0c885e6e1008ead3265.jpg",
-                    "price": "JPY 1,200",
-                    "title": "Homemade Roast Beef and Sushi Restaurant's Gari Dressing Salad"
-                }
-            ]
+            "Food": [],
+            "Drink": [],
+            "Lunch": []
         },
         "restaurant_information": {
             "details": [
                 {
                     "field": "Restaurant name",
-                    "value": "KINKA sushi bar izakaya Shibuya"
+                    "value": "Tempura Fukuda"
                 },
                 {
                     "field": "Categories",
-                    "value": "Sushi, Izakaya (Tavern), Seafood"
+                    "value": "Tempura, Shabu shabu (Japanese hotpot), Japanese Cuisine"
                 },
                 {
                     "field": "Phone number (for reservation and inquiry)",
-                    "value": "050-5592-6582"
+                    "value": "050-5594-4659"
                 },
                 {
                     "field": "Reservation availability",
-                    "value": "Reservations available"
+                    "value": "Reservation only"
                 },
                 {
                     "field": "Address",
-                    "value": "東京都渋谷区宇田川町3-10 いちごフィエスタ渋谷 2F"
+                    "value": "佐賀県嬉野市嬉野町大字下宿乙949-4"
                 },
                 {
                     "field": "Transportation",
-                    "value": "●Access from the station\nJR Yamanote Line / Shibuya Station (Exit 3a) 4-minute walk (320m)\nJR Saikyo Line / Shibuya Station (Exit 3a) 4-minute walk (320m)\nJR Narita Express / Shibuya Station (Exit 3a) 4-minute walk (320m)\n\n●Access from the bus stop\nKeio Bus Shibu 63 Jinnan 1, 2 minutes walk (150m)\nKeio Bus Shibu 61, 3 minutes walk from Seibu Department Store (200m)\nKeio Bus Shibu 61 Udagawacho 3 minute walk (210m)"
+                    "value": "5 minutes by car from Ureshino IC\n7 minutes walk from Ureshino Onsen Bus Center\nAbout 20 minutes walk from Ureshino Onsen Station on the Nishi Kyushu Shinkansen\nThere are also taxis (Onsen Taxi, Saga Taxi) and route buses (JR Kyushu, Yutoku).\nSome people can also rent bicycles using a dedicated app (HELLO CYCLING)."
                 },
                 {
-                    "field": "Opening hours",
-                    "value": "Mon, Tue, Wed, Thu, Fri, Sat, Sun, Public Holiday"
+                    "field": "Business hours",
+                    "value": "Mon, Tue, Wed, Sat, Sun"
                 },
                 {
                     "field": "Average price",
-                    "value": "JPY 4,000 - JPY 4,999"
+                    "value": "JPY 10,000 - JPY 14,999"
                 },
                 {
                     "field": "Average price（Based on reviews）",
-                    "value": "JPY 8,000 - JPY 9,999"
+                    "value": null
                 },
                 {
                     "field": "Payment methods",
                     "value": "Credit card accepted"
                 },
                 {
+                    "field": "Receipt (Qualified simple invoice)",
+                    "value": "*For the latest registration status, please check the National Tax Agency's Qualified Invoice Issuer Publication Site or contact the restaurant."
+                },
+                {
                     "field": "Service charge & fee",
-                    "value": "サービス料なし、チャージ料なし (渋谷 寿司ダイニング居酒屋・バーKINKA)"
+                    "value": "No service charge or charge fee"
                 }
             ],
             "seats_facilities": [
                 {
                     "field": "Number of seats",
-                    "value": "66 Seats"
+                    "value": "10 seats"
+                },
+                {
+                    "field": "Maximum party size",
+                    "value": null
                 },
                 {
                     "field": "Private rooms",
@@ -647,17 +202,17 @@
                 },
                 {
                     "field": "Parking",
-                    "value": "Unavailable"
+                    "value": "Available"
                 },
                 {
                     "field": "Space/facilities",
-                    "value": "Stylish space,Relaxing space,Spacious seating,Couple seating,Counter seating,Sofa seating,Free Wi-Fi available"
+                    "value": "Stylish space, Relaxing space, Spacious seating, Counter seating, Wheelchair access, Power outlets available, Free Wi-Fi available, Wheelchair accessible"
                 }
             ],
             "menu": [
                 {
                     "field": "Drink",
-                    "value": "Wine,Cocktails available,Particular about Sake (Nihonshu),Particular about Shochu (Japanese spirits),Particular about cocktails"
+                    "value": "Sake (Nihonshu), Shochu (Japanese spirits), Wine, Cocktails available, Particular about Sake (Nihonshu), Particular about wine"
                 },
                 {
                     "field": "Food",
@@ -667,7 +222,7 @@
             "feature_related_info": [
                 {
                     "field": "Occasion",
-                    "value": "Family friendly |Dates"
+                    "value": null
                 },
                 {
                     "field": "Location",
@@ -675,52 +230,35 @@
                 },
                 {
                     "field": "Service",
-                    "value": ",Take-out,Delivery"
+                    "value": "Celebrations and surprises(Birthday plate)"
                 },
                 {
                     "field": "Family friendly",
-                    "value": "Children welcome"
+                    "value": "Children welcome(Babies welcome, Preschoolers welcome, School-age children welcome), Strollers welcome"
+                },
+                {
+                    "field": "Dress code",
+                    "value": "Dress in a way that does not cause inconvenience to others\n(Please especially refrain from wearing strong-smelling perfumes, etc.)\nFor the above reasons, we may refuse entry to the store.\nThank you for your understanding and cooperation."
                 },
                 {
                     "field": "Website",
-                    "value": "https://www.kinkasushibarizakaya.com/jp"
+                    "value": "https://tempura-fukuda.com"
                 },
                 {
                     "field": "The opening day",
-                    "value": "2016.9.8"
+                    "value": "2016.11.1"
                 },
                 {
                     "field": "Phone number",
-                    "value": "03-6452-5258"
-                },
-                {
-                    "field": "Remarks",
-                    "value": "Media Information\nOur store was featured on Street Corner Station: Going Everywhere in Search of Rumors on Wednesday, June 2, 2021!\nFor details, please see here → https://www.1242.com/zoom/zoom_blog/blog20210603-255281/\n\n================\n[LINE official account launched]\nAdd a new friend and get a free sushi meal!!\nPlus, we're offering special LINE coupons!\n----------------------------------------------------------\n\n\"Kinka, a hidden gem where amazing sushi/sashimi and sake are served\".\nWe serve not only the classic nigiri sushi, made from the freshest ingredients, but also Canadian lobster sushi/sashimi, blow-torched pressed sushi, and gorgeous sashimi platters. Our bartender also offers a wide array of the best sake, shochu and Japanese-influenced cocktails. The interior, designed by a Canadian designer, offers a very elegant and warm ambiance perfect for any occasion, ranging from dates to business meetings to even a quiet evening alone as you enjoy some light tapas and a glass of wine.\nLobster Sushi/Sashimi\nWe proudly present our Canadian lobster nigiri sushi and sashimi platters.\nThe sweet and succulent lobster harmonizes perfectly with soy sauce.\nAburi Oshizushi\nWe offer three types of blow-torched pressed sushi: shrimp, salmon and mackerel. We flavor the pressed sushi with our KINKA original sauce and torch the surface. This unique take on sushi is loved by both Japanese and non-Japanese alike.\n\n◆Online Reservation☆\nhttps://www.kinkasushibarizakaya.com/jp/information/?lang=eng"
+                    "value": "0954-42-2929"
                 }
             ]
         },
         "interior_photos": [
-            "https://tblg.k-img.com/restaurant/images/Rvw/150385/150385618.jpg",
-            "https://tblg.k-img.com/restaurant/images/Rvw/150385/150385617.jpg",
-            "https://tblg.k-img.com/restaurant/images/Rvw/150385/150385614.jpg",
-            "https://tblg.k-img.com/restaurant/images/Rvw/150385/150385612.jpg",
-            "https://tblg.k-img.com/restaurant/images/Rvw/150385/150385611.jpg",
-            "https://tblg.k-img.com/restaurant/images/Rvw/150385/150385609.jpg",
-            "https://tblg.k-img.com/restaurant/images/Rvw/150385/150385607.jpg",
-            "https://tblg.k-img.com/restaurant/images/Rvw/150385/150385606.jpg",
-            "https://tblg.k-img.com/restaurant/images/Rvw/150068/150068471.jpg",
-            "https://tblg.k-img.com/restaurant/images/Rvw/110264/110264764.jpg",
-            "https://tblg.k-img.com/restaurant/images/Rvw/117078/117078263.jpg",
-            "https://tblg.k-img.com/restaurant/images/Rvw/110264/110264755.jpg",
-            "https://tblg.k-img.com/restaurant/images/Rvw/110263/110263688.jpg",
-            "https://tblg.k-img.com/restaurant/images/Rvw/110263/110263643.jpg",
-            "https://tblg.k-img.com/restaurant/images/Rvw/110263/110263629.jpg",
-            "https://tblg.k-img.com/restaurant/images/Rvw/110263/110263617.jpg",
-            "https://tblg.k-img.com/restaurant/images/Rvw/62698/62698123.jpg",
-            "https://tblg.k-img.com/restaurant/images/Rvw/59235/59235088.jpg",
-            "https://tblg.k-img.com/restaurant/images/Rvw/55882/55882524.jpg",
-            "https://tblg.k-img.com/restaurant/images/Rvw/55882/55882574.jpg"
+            "https://tblg.k-img.com/restaurant/images/Rvw/98214/98214727.jpg",
+            "https://tblg.k-img.com/restaurant/images/Rvw/98215/98215059.jpg",
+            "https://tblg.k-img.com/restaurant/images/Rvw/98215/98215070.jpg"
         ],
-        "url": "https://tabelog.com/en/tokyo/A1303/A130301/13199924/"
+        "url": "https://tabelog.com/en/saga/A4104/A410401/41006451/"
     }
 ]
