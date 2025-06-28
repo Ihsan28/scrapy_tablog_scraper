@@ -1,31 +1,6 @@
-# Byte-compiled files
-*.pyc
+/.scrapy
 __pycache__/
-
-# Logs
-*.log
-
-# Scrapy cache
-.scrapy/
-
-# Output files (optional, if you don't want them in version control)
-*.json
-*.csv
-*.xml
-
-# Environment files
-.env
-
-# Virtual environment folder (if you're using one)
-.venv/
-env/
-
-# System files
-.DS_Store
-Thumbs.db
-
-# PyCharm IDE files (if you're using PyCharm)
-.idea/
-
-# VSCode settings (if you're using Visual Studio Code)
-.vscode/
+*.pyc
+tabelog_scraper/spiders/__pycache__/
+tabelog_scraper/__pycache__/settings.cpython-312.pyc
+tabelog_scraper/spiders/__pycache__/restaurants.cpython-312.pyc

@@ -9,6 +9,13 @@ from selenium.webdriver.support import expected_conditions as EC
 from scrapy.http import HtmlResponse
 import time
 import logging
+from fastapi import FastAPI, Query
+from fastapi.responses import JSONResponse, FileResponse
+import uvicorn
+import os
+import json
+from datetime import datetime
+
 
 # Set Selenium logging level to WARNING
 logging.getLogger('selenium').setLevel(logging.WARNING)
@@ -16,27 +23,60 @@ logging.getLogger('selenium').setLevel(logging.WARNING)
 # Set Scrapy logging level to WARNING
 logging.getLogger('scrapy').setLevel(logging.WARNING)
 
+app = FastAPI(title="Tabelog Restaurant Scraper API",
+              description="API for scraping Tabelog restaurant data.")
+
+
 class RestaurantsSpider(scrapy.Spider):
     name = "restaurants"
     allowed_domains = ["tabelog.com"]
-    start_urls = ['https://tabelog.com/en/rstLst/?utf8=%E2%9C%93&svd=&svt=1900&svps=2&vac_net=1&pcd=41']
+    # start_urls = ['https://tabelog.com/en/rstLst/?utf8=%E2%9C%93&svd=&svt=1900&svps=2&vac_net=1&pcd=41']
 
-    def __init__(self, num_restaurants=1, *args, **kwargs):
+    # start_urls = ['https://tabelog.com/en/tokyo/A1303/rstLst/?LstSitu=2']
+
+    def __init__(self, num_restaurants=577, start_urls=None, resume=False, *args, **kwargs):
         super(RestaurantsSpider, self).__init__(*args, **kwargs)
-        # Desired number of restaurant links
         self.num_restaurants = int(num_restaurants)
-        self.collected_links = 0  # Counter for collected links
-
-        # Timing variables
-        self.total_scraping_time = 0
+        self.collected_links = 0
         self.processed_links = 0
+        self.resume = resume
+        self.start_urls = start_urls or [
+            'https://tabelog.com/en/tokyo/A1303/rstLst/?LstSitu=2']
+        self.restore_file = 'scrape_restore.json'
+        self.status_log = 'scrape_status.log'
+        self.scraped_urls = set()
+        self.failed_urls = set()
+        self.start_time = datetime.now()
 
+        # Set up logging
+        self.logger.info(f"Initializing RestaurantsSpider with num_restaurants={num_restaurants}, resume={resume}")
+        self.logger.info(f"Start URLs: {self.start_urls}")
+
+        # Restore point logic
+        if self.resume and os.path.exists(self.restore_file):
+            with open(self.restore_file, 'r') as f:
+                data = json.load(f)
+                self.scraped_urls = set(data.get('scraped_urls', []))
+                self.failed_urls = set(data.get('failed_urls', []))
+                self.collected_links = len(self.scraped_urls)
+            self.logger.info(f"Restored state - Scraped: {len(self.scraped_urls)}, Failed: {len(self.failed_urls)}")
+
+        # Set up Selenium WebDriver
+        self.logger.info("Setting up Chrome WebDriver")
         chrome_options = Options()
         # chrome_options.add_argument("--headless")  # Uncomment if you don't need GUI
         chrome_options.add_argument("--disable-gpu")
         chrome_options.add_argument("--no-sandbox")
-        self.driver = webdriver.Chrome(options=chrome_options)
-        self.driver.maximize_window()
+        chrome_options.add_argument('--disable-dev-shm-usage')
+        chrome_options.add_argument('--window-size=1920,1080')
+        
+        try:
+            self.driver = webdriver.Chrome(options=chrome_options)
+            self.logger.info("Chrome WebDriver initialized successfully")
+        except Exception as e:
+            self.logger.error(f"Failed to initialize Chrome WebDriver: {e}")
+            raise
+        # self.driver.maximize_window()
 
         # Wait times for different operations
         self.wait_general = 10
@@ -45,6 +85,7 @@ class RestaurantsSpider(scrapy.Spider):
         self.wait_photos = 10
 
     def parse(self, response):
+        self.logger.info(f"Starting parse for URL: {response.url}")
         self.driver.get(response.url)
 
 # try:
@@ -78,69 +119,136 @@ class RestaurantsSpider(scrapy.Spider):
         # Extract links to restaurant detail pages
         restaurant_links = response.css(
             'a.list-rst__rst-name-target::attr(href)').getall()
+        # Remove already scraped links if resuming
+        if self.resume:
+            self.logger.info("Resuming - loading existing state")
+            if os.path.exists(self.restore_file):
+                with open(self.restore_file, 'r') as f:
+                    restore_data = json.load(f)
+                    self.scraped_urls = set(restore_data.get('scraped_urls', []))
+                    self.failed_urls = set(restore_data.get('failed_urls', []))
+                    pending_urls = set(restore_data.get('pending_urls', []))
+                self.logger.info(f"Loaded state - Scraped: {len(self.scraped_urls)}, Failed: {len(self.failed_urls)}, Pending: {len(pending_urls)}")
+            else:
+                pending_urls = set()
+                self.logger.info("Resume requested but no restore file found")
+        else:
+            pending_urls = set()
+            self.logger.info("Starting fresh scrape")
 
-        print(f"Found {len(restaurant_links)} restaurant links on the page.")
-        print(restaurant_links)
-        # just for debugging, append all links to a file and also the number of links found
-        with open('restaurant_links.txt', 'a') as f:
-            f.write(f"Found {self.collected_links} restaurant links on the previous.\n")
-            for link in restaurant_links:
-                f.write(link + '\n')
-        # Log the number of links found
-        self.logger.info(
-            f"Found {len(restaurant_links)} restaurant links on the page.")
+        # Add new links to pending_urls
+        new_links = 0
+        for link in restaurant_links:
+            if link not in self.scraped_urls and link not in self.failed_urls:
+                pending_urls.add(link)
+                new_links += 1
+        
+        self.logger.info(f"Added {new_links} new links to pending list")
 
-        # Process links in batches of 5
-        batch_size = 5
-        for i in range(0, len(restaurant_links), batch_size):
-            batch_links = restaurant_links[i:i + batch_size]
+        # Save all found links to scrape_restore.json
+        self.logger.info(f"Saving {len(pending_urls)} pending URLs to restore file")
+        with open(self.restore_file, 'w') as f:
+            json.dump({
+                'pending_urls': list(pending_urls),
+                'scraped_urls': list(self.scraped_urls),
+                'failed_urls': list(self.failed_urls)
+            }, f)
 
-            for link in batch_links:
-                if self.collected_links < self.num_restaurants:
-                    self.collected_links += 1
-                    yield scrapy.Request(link, callback=self.parse_detail)
-                else:
+        # If there are more pages, keep crawling to collect all links
+        next_page = response.css('a.c-pagination__arrow--next::attr(href)').get()
+        if next_page:
+            self.logger.info(f"Found next page: {next_page}")
+            yield scrapy.Request(response.urljoin(next_page), callback=self.parse)
+        else:
+            self.logger.info("No more pages found - starting detail scraping")
+            # Once all links are collected, start scraping details
+            count = 0
+            for link in list(pending_urls):
+                if count >= self.num_restaurants:
+                    self.logger.info(f"Reached limit of {self.num_restaurants} restaurants")
                     break
-
-            # Stop processing if the desired number of links is reached
-            if self.collected_links >= self.num_restaurants:
-                break
-
-        # Handle next page if more links are needed
-        if self.collected_links < self.num_restaurants:
-            next_page = response.css(
-                'a.c-pagination__arrow--next::attr(href)').get()
-            if next_page:
-                print(f"Found next page: {next_page}")
-                yield scrapy.Request(response.urljoin(next_page), callback=self.parse)
+                count += 1
+                self.logger.info(f"Queuing detail scrape for link {count}/{min(len(pending_urls), self.num_restaurants)}: {link}")
+                yield scrapy.Request(link, callback=self.parse_detail, meta={'restaurant_url': link})
 
     def parse_detail(self, response):
-        start_time = time.time()  # Start timing
+        url = response.meta.get('restaurant_url', response.url)
+        start_time = datetime.now()
+        # Load restore data
+        with open(self.restore_file, 'r') as f:
+            restore_data = json.load(f)
+        pending_urls = set(restore_data.get('pending_urls', []))
+        scraped_urls = set(restore_data.get('scraped_urls', []))
+        failed_urls = set(restore_data.get('failed_urls', []))
+        try:
+            self.driver.get(response.url)
+            body = self.driver.page_source
+            response = HtmlResponse(
+                self.driver.current_url, body=body, encoding='utf-8', request=response.request)
 
-        self.driver.get(response.url)
-        body = self.driver.page_source
-        response = HtmlResponse(
-            self.driver.current_url, body=body, encoding='utf-8', request=response.request)
+            # headline, full_description = self.get_headline_description(response)
+            restaurant_information = self.parse_restaurant_information()
+            review_count = self.get_review_count(response)
+            # specialities = self.fetch_specialities_data()
+            # setmenu = self.navigate_to_menu()
+                # interior_photos = self.navigate_and_get_interior_official_photos()
+            # # review_rating_data = self.review_rating(response)
+            data = {
+                # "editorial_overview": {
+                #     "headline": headline,
+                #     "description": full_description,
+                # },
+                "restaurant_information": restaurant_information,
+                # "review_count": review_count,
+            # "review_rating": review_rating_data,
+                # "specialities": specialities,
+                # "menu": setmenu,
+                # "interior_photos": interior_photos,
+                'url': response.url
+            }
+            # Update restore data
+            pending_urls.discard(url)
+            scraped_urls.add(url)
+            with open(self.restore_file, 'w') as f:
+                json.dump({
+                    'pending_urls': list(pending_urls),
+                    'scraped_urls': list(scraped_urls),
+                    'failed_urls': list(failed_urls)
+                }, f)
+            # Log status
+            elapsed = (datetime.now() - start_time).total_seconds()
+            with open(self.status_log, 'a') as logf:
+                logf.write(
+                    f"SUCCESS: {url} | Time: {elapsed:.2f}s | {datetime.now().isoformat()}\n")
+            yield data
+        except Exception as e:
+            pending_urls.discard(url)
+            failed_urls.add(url)
+            with open(self.restore_file, 'w') as f:
+                json.dump({
+                    'pending_urls': list(pending_urls),
+                    'scraped_urls': list(scraped_urls),
+                    'failed_urls': list(failed_urls)
+                }, f)
+            elapsed = (datetime.now() - start_time).total_seconds()
+            with open(self.status_log, 'a') as logf:
+                logf.write(
+                    f"FAILED: {url} | Time: {elapsed:.2f}s | {datetime.now().isoformat()} | Error: {e}\n")
+                
+            # Handle 429 error (Too Many Requests)
+            if hasattr(e, 'status_code') and e.status_code == 429:
+                import time as _time
+                _time.sleep(60)  # Wait 1 minute before retrying
+                yield scrapy.Request(url, callback=self.parse_detail, meta={'restaurant_url': url}, dont_filter=True)
 
-        headline, full_description = self.get_headline_description(response)
-        specialities = self.fetch_specialities_data()
-        setmenu = self.navigate_to_menu()
-        restaurant_information = self.parse_restaurant_information()
-        interior_photos = self.navigate_and_get_interior_official_photos()
+    def _save_restore_point(self):
+        with open(self.restore_file, 'w') as f:
+            json.dump({
+                'scraped_urls': list(self.scraped_urls),
+                'failed_urls': list(self.failed_urls)
+            }, f)
 
-        data = {
-            "editorial_overview": {
-                "headline": headline,
-                "description": full_description,
-            },
-            "review_rating": {},
-            "specialities": specialities,
-            "menu": setmenu,
-            "restaurant_information": restaurant_information,
-            "interior_photos": interior_photos,
-            'url': response.url
-        }
-
+    def review_rating(self, response):
         try:
             # Additional scraping logic for ratings (if applicable)
             ratings_url = response.css('a#rating::attr(href)').get()
@@ -149,10 +257,10 @@ class RestaurantsSpider(scrapy.Spider):
                 WebDriverWait(self.driver, 3).until(EC.presence_of_element_located(
                     (By.CSS_SELECTOR, 'div.ratings-contents')))
                 body = self.driver.page_source
-                ratings_response = HtmlResponse(self.driver.current_url, body=body, encoding='utf-8',
-                                                request=response.request)
-                
-                # logger.info("Extracting average ratings...")
+                ratings_response = HtmlResponse(
+                    self.driver.current_url, body=body, encoding='utf-8', request=response.request)
+
+                logger.info("Extracting average ratings...")
 
                 # Extract Average Ratings
                 average_ratings = {}
@@ -216,19 +324,72 @@ class RestaurantsSpider(scrapy.Spider):
                             logger.error(
                                 f"Error extracting distribution item {index}: e")
 
-                # Add extracted data to review_rating
-                data["review_rating"] = {
-                    "average_ratings": average_ratings,
-                    "rating_distribution": rating_distribution
-                }
-
                 # Log the final structured data
                 # logger.info(f"Final extracted ratings data: {data['review_rating']}")
+
+                # After extracting ratings, navigate to review page
+                # self.navigate_to_review_page()
+
         except Exception as e:
             self.logger.error(f"Error navigating to Ratings page: e")
 
-        # Yield the final result
-        yield data
+        return {
+            "average_ratings": average_ratings,
+            "rating_distribution": rating_distribution,
+            "reviews": self.navigate_to_review_page()
+        }
+
+    def navigate_to_review_page(self):
+        try:
+            # Wait for the Reviews tab to appear
+            review_tab = WebDriverWait(self.driver, self.wait_menu).until(
+                EC.presence_of_element_located(
+                    (By.CSS_SELECTOR, "a#review"))
+            )
+            review_url = review_tab.get_attribute('href')
+            logger.info(f"Navigating to Review tab: {review_url}")
+
+            # Click the Reviews tab
+            self.driver.execute_script(
+                "arguments[0].scrollIntoView(true);", review_tab)
+            review_tab.click()
+
+            # Wait for the review page to load
+            WebDriverWait(self.driver, self.wait_menu).until(
+                EC.presence_of_element_located(
+                    (By.CSS_SELECTOR, "div.rvw-item.js-rvw-item-clickable-area"))
+            )
+            logger.info("Successfully navigated to the review page.")
+
+            all_reviews = []
+            while True:
+                # Get the page source and create a Scrapy HtmlResponse
+                body = self.driver.page_source
+                response = HtmlResponse(
+                    self.driver.current_url, body=body, encoding='utf-8')
+
+                # Extract all reviews using parse_reviews
+                reviews = self.parse_reviews(response)
+                all_reviews.extend(reviews)
+
+                # Check for next page in pagination
+                next_page = response.css(
+                    'a.c-pagination__arrow--next::attr(href)').get()
+                if next_page:
+                    logger.info(f"Found next review page: {next_page}")
+                    self.driver.get(next_page)
+                    WebDriverWait(self.driver, self.wait_menu).until(
+                        EC.presence_of_element_located(
+                            (By.CSS_SELECTOR, "div.rvw-item.js-rvw-item-clickable-area"))
+                    )
+                else:
+                    break
+            return all_reviews
+
+        except Exception as e:
+            logger.error(
+                f"Failed to navigate to Review page or extract reviews: {e}")
+            return []
 
     def switch_to_english(self):
         try:
@@ -281,7 +442,8 @@ class RestaurantsSpider(scrapy.Spider):
         try:
             # Wait for the 'Specialities' section to load
             specialities_section = WebDriverWait(self.driver, self.wait_general).until(
-                EC.presence_of_all_elements_located((By.CLASS_NAME, "js-kodawari-cassete"))
+                EC.presence_of_all_elements_located(
+                    (By.CLASS_NAME, "js-kodawari-cassete"))
             )
 
             if not specialities_section:
@@ -292,7 +454,8 @@ class RestaurantsSpider(scrapy.Spider):
 
             # Click on the first speciality item to open the modal
             first_item = specialities_section[0]
-            self.driver.execute_script("arguments[0].scrollIntoView(true);", first_item)
+            self.driver.execute_script(
+                "arguments[0].scrollIntoView(true);", first_item)
             first_item.click()
             # logger.info("Clicked on the first speciality item.")
 
@@ -318,7 +481,8 @@ class RestaurantsSpider(scrapy.Spider):
             # Close the modal at the end
             try:
                 close_button = WebDriverWait(self.driver, self.wait_modal).until(
-                    EC.element_to_be_clickable((By.CLASS_NAME, "js-modal-close"))
+                    EC.element_to_be_clickable(
+                        (By.CLASS_NAME, "js-modal-close"))
                 )
                 close_button.click()
                 logger.info("Closed the modal.")
@@ -347,7 +511,8 @@ class RestaurantsSpider(scrapy.Spider):
                 )
                 if overlay:
                     logger.info("Closing overlay...")
-                    self.driver.execute_script("arguments[0].click();", overlay)
+                    self.driver.execute_script(
+                        "arguments[0].click();", overlay)
                     WebDriverWait(self.driver, self.wait_modal).until(
                         EC.invisibility_of_element(overlay))
                     logger.info("Overlay closed.")
@@ -359,7 +524,8 @@ class RestaurantsSpider(scrapy.Spider):
             logger.info(f"Navigating to Menu tab: {menu_tab_url}")
 
             # Scroll to the Menu tab and click it
-            self.driver.execute_script("arguments[0].scrollIntoView(true);", menu_tab)
+            self.driver.execute_script(
+                "arguments[0].scrollIntoView(true);", menu_tab)
             menu_tab.click()
 
             # Define a dictionary to store menu data from all tabs
@@ -384,7 +550,8 @@ class RestaurantsSpider(scrapy.Spider):
                     item_count = int(item_count_element.text.strip())
                     # logger.info(f"Item count for {tab_name}: {item_count}")
                     if item_count == 0:
-                        logger.info(f"Skipping {tab_name} tab as item count is 0.")
+                        logger.info(
+                            f"Skipping {tab_name} tab as item count is 0.")
                         menu_data[tab_name] = []
                         continue
 
@@ -399,7 +566,8 @@ class RestaurantsSpider(scrapy.Spider):
                     # logger.info(f"Navigating to {tab_name} tab: {tab_url}")
 
                     # Scroll to the tab link and click it
-                    self.driver.execute_script("arguments[0].scrollIntoView(true);", tab_link)
+                    self.driver.execute_script(
+                        "arguments[0].scrollIntoView(true);", tab_link)
                     tab_link.click()
 
                     # logger.info(f"Clicked on {tab_name} tab.")
@@ -436,7 +604,8 @@ class RestaurantsSpider(scrapy.Spider):
                     menu_data[tab_name] = tab_menu_data
 
                 except Exception as e:
-                    logger.warning(f"Failed to navigate to {tab_name} tab or extract data: e")
+                    logger.warning(
+                        f"Failed to navigate to {tab_name} tab or extract data: e")
                     menu_data[tab_name] = []
 
             return menu_data
@@ -501,7 +670,8 @@ class RestaurantsSpider(scrapy.Spider):
                 "}).filter(item => item.image_src !== null);"
             )
 
-            logger.info(f"Extracted {len(drink_menu_data)} drink menu items with valid images.")
+            logger.info(
+                f"Extracted {len(drink_menu_data)} drink menu items with valid images.")
             return drink_menu_data
 
         except Exception as e:
@@ -651,4 +821,309 @@ class RestaurantsSpider(scrapy.Spider):
             return []
 
     def closed(self, reason):
-        self.driver.quit()
+        self.logger.info(f"Spider closing with reason: {reason}")
+        try:
+            if hasattr(self, 'driver') and self.driver:
+                self.driver.quit()
+                self.logger.info("WebDriver closed successfully")
+        except Exception as e:
+            self.logger.error(f"Error closing WebDriver: {e}")
+        
+        # Log final statistics
+        if os.path.exists(self.restore_file):
+            with open(self.restore_file, 'r') as f:
+                data = json.load(f)
+                pending = len(data.get('pending_urls', []))
+                scraped = len(data.get('scraped_urls', []))
+                failed = len(data.get('failed_urls', []))
+                self.logger.info(f"Final stats - Scraped: {scraped}, Failed: {failed}, Pending: {pending}")
+        
+        elapsed = (datetime.now() - self.start_time).total_seconds()
+        self.logger.info(f"Total scraping time: {elapsed:.2f} seconds")
+        
+    
+    def get_review_count(self, response):
+        """Extract the review count from the navigation menu"""
+        try:
+            # Method 1: Try to get from the main navigation Reviews link
+            review_count_text = response.css('#rdnavi-review .rstdtl-navi__total-count em::text').get()
+            
+            if review_count_text:
+                return int(review_count_text.strip())
+            
+            # Method 2: Try to get from the sublist Reviews link  
+            review_count_text = response.css('#review .rstdtl-navi__sublist-item-count em::text').get()
+            
+            if review_count_text:
+                return int(review_count_text.strip())
+            
+            # Method 3: Try alternative selector for review count
+            review_count_text = response.css('a[href*="dtlrvwlst"] em::text').get()
+            
+            if review_count_text:
+                return int(review_count_text.strip())
+                
+            self.logger.warning("Could not find review count")
+            return 0
+            
+        except Exception as e:
+            self.logger.error(f"Error extracting review count: {e}")
+            return 0
+
+    def parse_reviews(self, response):
+        # Extract review details
+        reviews = []
+        for review in response.css('div.rvw-item.js-rvw-item-clickable-area'):
+            # reviewer details
+            reviewer_img = review.css('.rvw-item__rvwr-img::attr(src)').get()
+            if reviewer_img and not reviewer_img.endswith('rvwr_nophoto_70x70_re1.gif'):
+                reviewer_img = reviewer_img.replace('70x70_', '')
+            reviewer = {
+                'name': review.css('.rvw-item__rvwr-name::text').get(),
+                'profile': review.css('.rvw-item__rvwr-name::attr(href)').get(),
+                'img': reviewer_img,
+                'location': review.css('.rstdtl-rvw-country__name::text').get(),
+                'follower_count': review.css('.rvw-item__folower-num::text').get(),
+                'review_count': review.css('.rvw-item__rvwr-num::text').get(),
+            }
+
+            # Check for 'View all reviews' link for this reviewer
+            view_all_reviews_url = review.css(
+                'p.review-link-detail a.c-link-circle.js-link-bookmark-detail::attr(data-detail-url)').get()
+            reviewer_reviews = []
+            if view_all_reviews_url:
+                try:
+                    self.driver.get(view_all_reviews_url)
+                    WebDriverWait(self.driver, self.wait_menu).until(
+                        EC.presence_of_element_located(
+                            (By.CSS_SELECTOR, 'div.rvw-item--rvwdtl'))
+                    )
+                    detail_body = self.driver.page_source
+                    detail_response = HtmlResponse(
+                        self.driver.current_url, body=detail_body, encoding='utf-8')
+                    # Each review is inside a .rvw-item__review-contents-wrap > .rvw-item__review-contents
+                    for wrap in detail_response.css('div.rvw-item__review-contents-wrap'):
+                        rvw = wrap.css('div.rvw-item__review-contents')
+                        if not rvw:
+                            continue
+                        rvw = rvw[0]
+                        visit_date = rvw.css(
+                            '.rvw-item__date-inner > span:first-child::text').get()
+                        visit_count = rvw.css(
+                            '.rvw-item__count-num::text').get()
+                        overall_rating = rvw.css(
+                            '.rvw-item__single-ratings-total .c-rating-v3__val--strong::text').get()
+                        meal_type = rvw.css(
+                            '.rvw-item__single-ratings-total .c-rating-v3__time::attr(aria-label)').get()
+                        price = rvw.css(
+                            '.rvw-item__payment-amount-delimiter::text').get()
+                        # Sub-ratings
+                        sub_ratings = []
+                        for sub in rvw.css('.c-rating-detail__item'):
+                            label = sub.css('span::text').get()
+                            value = sub.css('strong::text').get()
+                            sub_ratings.append(
+                                {'label': label, 'value': value})
+                        # Images
+                        review_images = [
+                            img.css(
+                                'a.js-imagebox-trigger::attr(href)').get().replace('640x640_rect_', '')
+                            for img in rvw.css('ul.rvw-photo__list li.rvw-photo__list-item')
+                            if img.css('a.js-imagebox-trigger::attr(href)').get()
+                        ]
+                        # Comment (not always present)
+                        review_comment = rvw.css(
+                            'div.rvw-item__rvw-comment p::text').get()
+                        # Title (optional)
+                        review_title = rvw.css(
+                            'p.rvw-item__title strong::text').get()
+                        reviewer_reviews.append({
+                            'review_title': review_title,
+                            'review_comment': review_comment,
+                            'review_images': review_images,
+                            'visit_date': visit_date,
+                            'visit_count': visit_count,
+                            'overall_rating': overall_rating,
+                            'meal_type': meal_type,
+                            'price_per_person': price,
+                            'sub_ratings': sub_ratings,
+                        })
+                except Exception as e:
+                    logger.warning(
+                        f"Failed to fetch all reviews for reviewer at {view_all_reviews_url}: {e}")
+            else:
+                # If no 'View all reviews', try to extract all reviews from the current review block
+                for wrap in review.css('div.rvw-item__review-contents-wrap'):
+                    rvw = wrap.css('div.rvw-item__review-contents')
+                    if not rvw:
+                        continue
+                    rvw = rvw[0]
+                    visit_date = rvw.css(
+                        '.rvw-item__date-inner > span:first-child::text').get()
+                    visit_count = rvw.css('.rvw-item__count-num::text').get()
+                    overall_rating = rvw.css(
+                        '.rvw-item__single-ratings-total .c-rating-v3__val--strong::text').get()
+                    meal_type = rvw.css(
+                        '.rvw-item__single-ratings-total .c-rating-v3__time::attr(aria-label)').get()
+                    price = rvw.css(
+                        '.rvw-item__payment-amount-delimiter::text').get()
+                    price_per_person = rvw.css(
+                        '.rvw-item__payment-amount-people::text').get()
+                    # Sub-ratings
+                    sub_ratings = []
+                    for sub in rvw.css('.c-rating-detail__item'):
+                        label = sub.css('span::text').get()
+                        value = sub.css('strong::text').get()
+                        sub_ratings.append({'label': label, 'value': value})
+                    # Images
+                    review_images = [
+                        img.css(
+                            'a.js-imagebox-trigger::attr(href)').get().replace('640x640_rect_', '')
+                        for img in rvw.css('ul.rvw-photo__list li.rvw-photo__list-item')
+                        if img.css('a.js-imagebox-trigger::attr(href)').get()
+                    ]
+                    # Comment (not always present)
+                    review_comment = rvw.css(
+                        'div.rvw-item__rvw-comment p::text').get()
+                    # Title (optional)
+                    review_title = rvw.css(
+                        'p.rvw-item__title strong::text').get()
+                    reviewer_reviews.append({
+                        'review_title': review_title,
+                        'review_comment': review_comment,
+                        'review_images': review_images,
+                        'visit_date': visit_date,
+                        'visit_count': visit_count,
+                        'overall_rating': overall_rating,
+                        'meal_type': meal_type,
+                        'price': price,
+                        'price_per_person': price_per_person,
+                        'sub_ratings': sub_ratings,
+                    })
+            reviews.append({
+                'reviewer': reviewer,
+                'reviews': reviewer_reviews if reviewer_reviews else None
+            })
+        return reviews
+
+
+@app.get("/download/{filename}", summary="Download output file", description="Download a file generated by the scraper.")
+def download_file(filename: str):
+    file_path = os.path.join(os.getcwd(), filename)
+    if os.path.exists(file_path):
+        return FileResponse(file_path, filename=filename, media_type='application/json')
+    return JSONResponse(content={"error": "File not found."}, status_code=404)
+
+
+@app.get("/scrape", summary="Scrape Tabelog restaurants", description="Scrape Tabelog restaurants with given base_url and num_restaurants.")
+def scrape(
+    base_url: str = Query(..., description="Base URL to start scraping from (e.g. https://tabelog.com/en/tokyo/A1303/rstLst/?LstSitu=2)"), 
+    num_restaurants: int = Query(10, description="Number of restaurants to scrape"), 
+    resume: bool = Query(False, description="Resume from last restore point (True) or start from beginning (False)")
+    ):
+
+    # Set up detailed logging for debugging
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+    logger = logging.getLogger(__name__)
+    
+    logger.info(f"Starting scrape with base_url: {base_url}, num_restaurants: {num_restaurants}, resume: {resume}")
+    
+    try:
+        from scrapy.crawler import CrawlerProcess
+        from scrapy.utils.project import get_project_settings
+        logger.info("Imported Scrapy modules successfully")
+        
+        output_file = "restaurants.json"
+        restore_file = "scrape_restore.json"
+
+        # If not resuming, clear restore and output files
+        if not resume:
+            logger.info("Not resuming - clearing existing files")
+            if os.path.exists(restore_file):
+                os.remove(restore_file)
+                logger.info(f"Removed {restore_file}")
+            if os.path.exists(output_file):
+                os.remove(output_file)
+                logger.info(f"Removed {output_file}")
+        else:
+            logger.info("Resuming from existing state")
+
+        # Create and configure the crawler process
+        logger.info("Setting up crawler process")
+        settings = get_project_settings()
+        logger.info(f"Got project settings: {settings}")
+        
+        process = CrawlerProcess(settings)
+        logger.info("Created CrawlerProcess")
+        
+        # Use the current class instead of importing
+        logger.info("Starting crawl process")
+        process.crawl(RestaurantsSpider, num_restaurants=num_restaurants, start_urls=[base_url], resume=resume)
+        logger.info("Crawler configured, starting process")
+        
+        process.start()
+        logger.info("Crawl process completed")
+
+        # After crawl, check restore file for status
+        pending, scraped, failed = [], [], []
+        if os.path.exists(restore_file):
+            logger.info(f"Reading restore file: {restore_file}")
+            with open(restore_file, "r") as f:
+                data = json.load(f)
+                pending = data.get("pending_urls", [])
+                scraped = data.get("scraped_urls", [])
+                failed = data.get("failed_urls", [])
+            logger.info(f"Status - Pending: {len(pending)}, Scraped: {len(scraped)}, Failed: {len(failed)}")
+        else:
+            logger.warning(f"Restore file {restore_file} not found")
+
+        if os.path.exists(output_file) and not pending:
+            download_url = f"/download/{output_file}"
+            logger.info(f"Scraping complete, output file created: {output_file}")
+            return {"message": "Scraping complete.", "download_url": download_url, "scraped": len(scraped), "failed": len(failed)}
+        elif pending:
+            logger.info("Scraping incomplete - pending URLs remain")
+            return {"message": "Scraping in progress or incomplete.", "pending": len(pending), "scraped": len(scraped), "failed": len(failed)}
+        else:
+            logger.error("No data scraped and no output file created")
+            return JSONResponse(content={"error": "No data scraped."}, status_code=500)
+            
+    except Exception as e:
+        logger.error(f"Exception in scrape endpoint: {str(e)}", exc_info=True)
+        return JSONResponse(content={"error": f"Internal server error: {str(e)}"}, status_code=500)
+
+
+@app.get("/status", summary="Get scraping status", description="Get the current scraping progress, including scraped, failed, pending, and total restaurants, plus recent log entries.")
+def get_status():
+    restore_file = "scrape_restore.json"
+    status_log = "scrape_status.log"
+    scraped = []
+    failed = []
+    pending = []
+    if os.path.exists(restore_file):
+        with open(restore_file, "r") as f:
+            data = json.load(f)
+            scraped = data.get("scraped_urls", [])
+            failed = data.get("failed_urls", [])
+            pending = data.get("pending_urls", [])
+    total = len(scraped) + len(failed) + len(pending)
+    last_logs = []
+    if os.path.exists(status_log):
+        with open(status_log, "r") as f:
+            lines = f.readlines()
+            last_logs = lines[-10:]
+    return {
+        "scraped": len(scraped),
+        "failed": len(failed),
+        "pending": len(pending),
+        "total": total,
+        "last_10_logs": [l.strip() for l in last_logs],
+        "scraped_urls": scraped,
+        "failed_urls": failed,
+        "pending_urls": pending
+    }
+
+
+if __name__ == "__main__":
+    uvicorn.run("tabelog_scraper.spiders.restaurants:app",
+                host="0.0.0.0", port=8000, reload=True)
