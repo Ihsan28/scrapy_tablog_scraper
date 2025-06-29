@@ -6,7 +6,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
-from scrapy.http import HtmlResponse
+from scrapy.http.response.html import HtmlResponse
 import time
 import logging
 from fastapi import FastAPI, Query
@@ -15,6 +15,9 @@ import uvicorn
 import os
 import json
 from datetime import datetime
+
+# Set up module-level logger
+logger = logging.getLogger(__name__)
 
 
 # Set Selenium logging level to WARNING
@@ -34,14 +37,25 @@ class RestaurantsSpider(scrapy.Spider):
 
     # start_urls = ['https://tabelog.com/en/tokyo/A1303/rstLst/?LstSitu=2']
 
-    def __init__(self, num_restaurants=577, start_urls=None, resume=False, *args, **kwargs):
+    def __init__(self, num_restaurants=5, start_urls=None, resume=False, *args, **kwargs):
         super(RestaurantsSpider, self).__init__(*args, **kwargs)
         self.num_restaurants = int(num_restaurants)
         self.collected_links = 0
         self.processed_links = 0
-        self.resume = resume
-        self.start_urls = start_urls or [
-            'https://tabelog.com/en/tokyo/A1303/rstLst/?LstSitu=2']
+        self.resume = resume if isinstance(resume, bool) else resume.lower() == 'true'
+        
+        # Handle start_urls properly
+        if start_urls:
+            if isinstance(start_urls, str):
+                # If it's a string, convert it to a list
+                self.start_urls = [start_urls]
+            elif isinstance(start_urls, list):
+                self.start_urls = start_urls
+            else:
+                self.start_urls = ['https://tabelog.com/en/tokyo/A1303/rstLst/?LstSitu=2']
+        else:
+            self.start_urls = ['https://tabelog.com/en/tokyo/A1303/rstLst/?LstSitu=2']
+            
         self.restore_file = 'scrape_restore.json'
         self.status_log = 'scrape_status.log'
         self.scraped_urls = set()
@@ -119,22 +133,24 @@ class RestaurantsSpider(scrapy.Spider):
         # Extract links to restaurant detail pages
         restaurant_links = response.css(
             'a.list-rst__rst-name-target::attr(href)').getall()
-        # Remove already scraped links if resuming
-        if self.resume:
-            self.logger.info("Resuming - loading existing state")
-            if os.path.exists(self.restore_file):
-                with open(self.restore_file, 'r') as f:
-                    restore_data = json.load(f)
-                    self.scraped_urls = set(restore_data.get('scraped_urls', []))
-                    self.failed_urls = set(restore_data.get('failed_urls', []))
-                    pending_urls = set(restore_data.get('pending_urls', []))
+        # Load existing state or start fresh
+        if os.path.exists(self.restore_file):
+            with open(self.restore_file, 'r') as f:
+                restore_data = json.load(f)
+                self.scraped_urls = set(restore_data.get('scraped_urls', []))
+                self.failed_urls = set(restore_data.get('failed_urls', []))
+                pending_urls = set(restore_data.get('pending_urls', []))
+            if self.resume:
+                self.logger.info("Resuming - loading existing state")
                 self.logger.info(f"Loaded state - Scraped: {len(self.scraped_urls)}, Failed: {len(self.failed_urls)}, Pending: {len(pending_urls)}")
             else:
-                pending_urls = set()
-                self.logger.info("Resume requested but no restore file found")
+                self.logger.info("Starting fresh scrape (but preserving collected URLs)")
         else:
             pending_urls = set()
-            self.logger.info("Starting fresh scrape")
+            if self.resume:
+                self.logger.info("Resume requested but no restore file found")
+            else:
+                self.logger.info("Starting fresh scrape")
 
         # Add new links to pending_urls
         new_links = 0
@@ -192,15 +208,15 @@ class RestaurantsSpider(scrapy.Spider):
             # specialities = self.fetch_specialities_data()
             # setmenu = self.navigate_to_menu()
                 # interior_photos = self.navigate_and_get_interior_official_photos()
-            # # review_rating_data = self.review_rating(response)
+            review_rating_data = self.review_rating(response)
             data = {
                 # "editorial_overview": {
                 #     "headline": headline,
                 #     "description": full_description,
                 # },
                 "restaurant_information": restaurant_information,
-                # "review_count": review_count,
-            # "review_rating": review_rating_data,
+                "review_count": review_count,
+                "review_rating": review_rating_data,
                 # "specialities": specialities,
                 # "menu": setmenu,
                 # "interior_photos": interior_photos,
@@ -236,7 +252,7 @@ class RestaurantsSpider(scrapy.Spider):
                     f"FAILED: {url} | Time: {elapsed:.2f}s | {datetime.now().isoformat()} | Error: {e}\n")
                 
             # Handle 429 error (Too Many Requests)
-            if hasattr(e, 'status_code') and e.status_code == 429:
+            if "429" in str(e) or "Too Many Requests" in str(e):
                 import time as _time
                 _time.sleep(60)  # Wait 1 minute before retrying
                 yield scrapy.Request(url, callback=self.parse_detail, meta={'restaurant_url': url}, dont_filter=True)
@@ -249,6 +265,9 @@ class RestaurantsSpider(scrapy.Spider):
             }, f)
 
     def review_rating(self, response):
+        average_ratings = {}
+        rating_distribution = []
+        
         try:
             # Additional scraping logic for ratings (if applicable)
             ratings_url = response.css('a#rating::attr(href)').get()
@@ -263,8 +282,6 @@ class RestaurantsSpider(scrapy.Spider):
                 logger.info("Extracting average ratings...")
 
                 # Extract Average Ratings
-                average_ratings = {}
-
                 # Extract titles and scores for average ratings
                 rating_titles = ratings_response.css(
                     'dl.ratings-contents__table dt.ratings-contents__table-txt::text').getall()
@@ -280,8 +297,6 @@ class RestaurantsSpider(scrapy.Spider):
                     # logger.info(f"Extracted average ratings: {average_ratings}")
 
                 # Extract Rating Distribution
-                rating_distribution = []
-
                 # Find all distribution items
                 distribution_items = ratings_response.css(
                     'li.ratings-contents__item')
@@ -322,7 +337,7 @@ class RestaurantsSpider(scrapy.Spider):
                                 })
                         except Exception as e:
                             logger.error(
-                                f"Error extracting distribution item {index}: e")
+                                f"Error extracting distribution item {index}: {e}")
 
                 # Log the final structured data
                 # logger.info(f"Final extracted ratings data: {data['review_rating']}")
@@ -331,7 +346,7 @@ class RestaurantsSpider(scrapy.Spider):
                 # self.navigate_to_review_page()
 
         except Exception as e:
-            self.logger.error(f"Error navigating to Ratings page: e")
+            self.logger.error(f"Error navigating to Ratings page: {e}")
 
         return {
             "average_ratings": average_ratings,
@@ -925,12 +940,11 @@ class RestaurantsSpider(scrapy.Spider):
                             sub_ratings.append(
                                 {'label': label, 'value': value})
                         # Images
-                        review_images = [
-                            img.css(
-                                'a.js-imagebox-trigger::attr(href)').get().replace('640x640_rect_', '')
-                            for img in rvw.css('ul.rvw-photo__list li.rvw-photo__list-item')
-                            if img.css('a.js-imagebox-trigger::attr(href)').get()
-                        ]
+                        review_images = []
+                        for img in rvw.css('ul.rvw-photo__list li.rvw-photo__list-item'):
+                            img_url = img.css('a.js-imagebox-trigger::attr(href)').get()
+                            if img_url:
+                                review_images.append(img_url.replace('640x640_rect_', ''))
                         # Comment (not always present)
                         review_comment = rvw.css(
                             'div.rvw-item__rvw-comment p::text').get()

@@ -12,6 +12,17 @@ BOT_NAME = "tabelog_scraper"
 SPIDER_MODULES = ["tabelog_scraper.spiders"]
 NEWSPIDER_MODULE = "tabelog_scraper.spiders"
 
+# Feed settings to output JSON
+FEEDS = {
+    'restaurants.json': {
+        'format': 'json',
+        'encoding': 'utf8',
+        'store_empty': False,
+        'indent': 2,
+    },
+}
+FEED_EXPORT_ENCODING = 'utf-8'
+
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = "tabelog_scraper (+http://www.yourdomain.com)"

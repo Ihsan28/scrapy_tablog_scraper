@@ -1,4 +1,5 @@
 /.scrapy
+/.venv
 __pycache__/
 *.pyc
 tabelog_scraper/spiders/__pycache__/
