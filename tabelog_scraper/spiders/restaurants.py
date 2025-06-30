@@ -99,7 +99,19 @@ class RestaurantsSpider(scrapy.Spider):
         self.wait_photos = 10
 
     def parse(self, response):
+        # Add 429 error handling at the start
+        if response.status == 429:
+            self.logger.warning("Received 429 error, waiting 60 seconds before retry")
+            import time
+            time.sleep(60)
+            yield scrapy.Request(url=response.url, callback=self.parse, dont_filter=True)
+            return
+        
         self.logger.info(f"Starting parse for URL: {response.url}")
+        # Add delay before using Selenium
+        import time
+        time.sleep(5)  # Wait 5 seconds before using Selenium
+
         self.driver.get(response.url)
 
 # try:
@@ -188,6 +200,15 @@ class RestaurantsSpider(scrapy.Spider):
                 yield scrapy.Request(link, callback=self.parse_detail, meta={'restaurant_url': link})
 
     def parse_detail(self, response):
+        # Add 429 error handling
+        if response.status == 429:
+            self.logger.warning("Received 429 error in detail page, waiting 60 seconds")
+            import time
+            time.sleep(60)
+            yield scrapy.Request(url=response.url, callback=self.parse_detail, 
+                           meta=response.meta, dont_filter=True)
+            return
+    
         url = response.meta.get('restaurant_url', response.url)
         start_time = datetime.now()
         # Load restore data
