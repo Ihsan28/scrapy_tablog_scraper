@@ -16,6 +16,7 @@ import os
 import json
 from datetime import datetime
 
+
 # Set up module-level logger
 logger = logging.getLogger(__name__)
 
@@ -58,8 +59,10 @@ class RestaurantsSpider(scrapy.Spider):
             
         self.restore_file = 'scrape_restore.json'
         self.status_log = 'scrape_status.log'
+        self.output = 'restaurants.json'
         self.scraped_urls = set()
         self.failed_urls = set()
+        self.pending_urls = set()
         self.start_time = datetime.now()
 
         # Set up logging
@@ -72,9 +75,14 @@ class RestaurantsSpider(scrapy.Spider):
                 data = json.load(f)
                 self.scraped_urls = set(data.get('scraped_urls', []))
                 self.failed_urls = set(data.get('failed_urls', []))
+                self.pending_urls = set(data.get('pending_urls', []))
                 self.collected_links = len(self.scraped_urls)
             self.logger.info(f"Restored state - Scraped: {len(self.scraped_urls)}, Failed: {len(self.failed_urls)}")
-
+        elif not self.resume and os.path.exists(self.restore_file):
+            os.remove(self.restore_file)
+            os.remove(self.status_log)
+            os.remove(self.output)
+       
         # Set up Selenium WebDriver
         self.logger.info("Setting up Chrome WebDriver")
         chrome_options = Options()
@@ -99,17 +107,17 @@ class RestaurantsSpider(scrapy.Spider):
         self.wait_photos = 10
 
     def parse(self, response):
+        import time
+
         # Add 429 error handling at the start
         if response.status == 429:
             self.logger.warning("Received 429 error, waiting 60 seconds before retry")
-            import time
             time.sleep(60)
             yield scrapy.Request(url=response.url, callback=self.parse, dont_filter=True)
             return
         
         self.logger.info(f"Starting parse for URL: {response.url}")
         # Add delay before using Selenium
-        import time
         time.sleep(5)  # Wait 5 seconds before using Selenium
 
         self.driver.get(response.url)
@@ -143,8 +151,8 @@ class RestaurantsSpider(scrapy.Spider):
             self.driver.current_url, body=body, encoding='utf-8', request=response.request)
 
         # Extract links to restaurant detail pages
-        restaurant_links = response.css(
-            'a.list-rst__rst-name-target::attr(href)').getall()
+        restaurant_links = response.css('a.list-rst__rst-name-target::attr(href)').getall()
+        
         # Load existing state or start fresh
         if os.path.exists(self.restore_file):
             with open(self.restore_file, 'r') as f:
@@ -167,7 +175,7 @@ class RestaurantsSpider(scrapy.Spider):
         # Add new links to pending_urls
         new_links = 0
         for link in restaurant_links:
-            if link not in self.scraped_urls and link not in self.failed_urls:
+            if link not in self.scraped_urls and link not in self.failed_urls and link not in pending_urls:
                 pending_urls.add(link)
                 new_links += 1
         
@@ -1053,7 +1061,7 @@ def download_file(filename: str):
 @app.get("/scrape", summary="Scrape Tabelog restaurants", description="Scrape Tabelog restaurants with given base_url and num_restaurants.")
 def scrape(
     base_url: str = Query(..., description="Base URL to start scraping from (e.g. https://tabelog.com/en/tokyo/A1303/rstLst/?LstSitu=2)"), 
-    num_restaurants: int = Query(10, description="Number of restaurants to scrape"), 
+    num_restaurants: int = Query(2, description="Number of restaurants to scrape"), 
     resume: bool = Query(False, description="Resume from last restore point (True) or start from beginning (False)")
     ):
 
@@ -1090,7 +1098,7 @@ def scrape(
         
         process = CrawlerProcess(settings)
         logger.info("Created CrawlerProcess")
-        
+
         # Use the current class instead of importing
         logger.info("Starting crawl process")
         process.crawl(RestaurantsSpider, num_restaurants=num_restaurants, start_urls=[base_url], resume=resume)
@@ -1162,3 +1170,5 @@ def get_status():
 if __name__ == "__main__":
     uvicorn.run("tabelog_scraper.spiders.restaurants:app",
                 host="0.0.0.0", port=8000, reload=True)
+    logger.info("FastAPI server started on http://localhost:8000")
+    logger.info("You can access the API at http://localhost:8000/docs")
